@@ -1,0 +1,8 @@
+                        BICITEC🚲
+---------------------------------------------------------
+• Sitio web: www.bicitec.com
+• Contacto: 12345678
+• Tarifa en colones por kilometro pedal (TR): 100
+• Tarifa por kilometro electrico (AE): 200
+• Tarifa por kilometro gasolina (AG): 300
+--------------------------------------------------------
