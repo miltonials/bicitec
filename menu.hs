@@ -34,7 +34,12 @@ menuOperativas usuarios = do
     putStrLn "Ingrese una opcion: "
     opcion <- getLine
     case opcion of
-        "1" -> putStrLn "Cargar y Mostrar parqueos"
+        "1" -> do 
+            parqueos <- cargarParqueos
+            mostrarParqueos parqueos
+            putStrLn "Presione enter para volver..."
+            opcion <- getLine
+            menuOperativas usuarios
         "2" -> putStrLn "Mostrar y asignar bicicletas"
         "3" -> cargarUsuariosAux
         "4" -> putStrLn "Estadisticas"
@@ -92,7 +97,7 @@ menuPrincipal usuarios = do
     putStrLn "1) Opciones Operativas"
     putStrLn "2) Opciones Generales"
     putStrLn "3) Salir"
-    putStrLn "Ingrese una opcion: "
+    putStr "Ingrese una opcion: "
     opcion <- getLine
     case opcion of
         "1" -> validarInicioSession usuarios
