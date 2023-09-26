@@ -5,6 +5,15 @@ import OpcionesGenerales
 import System.IO.Unsafe
 import Data.IORef
 
+data Parqueo = Parqueo { 
+    idParqueo :: String, 
+    nombre :: String, 
+    barrio :: String, 
+    provincia :: String, 
+    xCoord :: Double, 
+    yCoord :: Double 
+} deriving (Show)
+
 mostrarUsuarios :: [[String]] -> IO ()
 mostrarUsuarios usuarios = do
     putStrLn "Usuarios: "
@@ -49,6 +58,25 @@ menuOperativas usuarios = do
         _ -> do
             putStrLn "Opcion invalida"
             menuOperativas usuarios
+filtrarPorId :: String -> [[String]] -> [[String]]
+filtrarPorId idBuscado lista = filter (\sublista -> sublista !! 2 == idBuscado) lista
+
+consultarBicicletas :: [[String]] -> IO ()
+consultarBicicletas usuarios = do
+    parqueoCercano <- consultarBicicletasAux
+    let idParqueoCercano = parqueoCercano
+    bicicletas <- cargarArchivoEnLista "./data/bicicletas.csv"
+    putStrLn "id parqueo: "
+    -- print idParqueoCercano
+    -- print bicicletas
+    let listaConfigurada = quitarCaracterTercerElemento bicicletas
+    -- print listaConfigurada
+    let bicicletasdisponible = filtrarPorId idParqueoCercano listaConfigurada
+    putStr "Bicicletas disponibles: "
+    print bicicletasdisponible
+    putStrLn "Presione enter para volver..."
+    opcion <- getLine
+    menuGenerales usuarios
 
 menuGenerales :: [[String]] -> IO ()
 menuGenerales usuarios = do
@@ -59,7 +87,7 @@ menuGenerales usuarios = do
     putStrLn "Ingrese una opcion: "
     opcion <- getLine
     case opcion of
-        "1" -> putStrLn "Consultar bicicletas"
+        "1" -> consultarBicicletas usuarios
         "2" -> putStrLn "Alquilar bicicletas"
         "3" -> putStrLn "Facurar"
         "4" -> menuPrincipal usuarios

@@ -33,3 +33,9 @@ cargarUsuariosDesdeArchivo nombre = do
     datos <- leerArchivo nombre
     let lista = convertirStringALista datos
     return lista
+
+cargarArchivoEnLista :: String -> IO [[String]]
+cargarArchivoEnLista nombre = do
+    datos <- leerArchivo nombre
+    let lista = convertirStringALista datos
+    return lista
