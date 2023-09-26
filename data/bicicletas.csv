@@ -1,5 +1,5 @@
-B1,TR,1
-B2,AE,2
+B1,TR,transito
+B2,AE,transito
 B3,AG,3
 B4,TR,4
 B5,AE,5
@@ -7,7 +7,7 @@ B6,AG,6
 B7,TR,7
 B8,AE,8
 B9,AG,9
-B1,TR,2
+B10,TR,2
 B11,AE,3
 B12,AG,5
 B13,TR,1

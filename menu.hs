@@ -40,7 +40,9 @@ menuOperativas usuarios = do
             putStrLn "Presione enter para volver..."
             opcion <- getLine
             menuOperativas usuarios
-        "2" -> putStrLn "Mostrar y asignar bicicletas"
+        "2" -> do 
+            menuOperativosBicicletas
+            menuOperativas usuarios
         "3" -> cargarUsuariosAux
         "4" -> putStrLn "Estadisticas"
         "5" -> menuPrincipal usuarios
@@ -70,16 +72,20 @@ validarInicioSession :: [[String]] -> IO ()
 validarInicioSession usuarios = do 
     putStrLn "Ingrese su usuario: "
     usuario <- getLine
-    putStrLn "\nIngrese su contraseña: "
-    contrasena <- getLine
-    if usuario == "admin" && contrasena == "admin" then do
-        putStrLn "Inicio de session exitoso"
-        menuOperativas usuarios
-    else if usuario == "0" && contrasena == "0" then do
+    if usuario == "admin" then do
+        putStrLn "\nIngrese su contraseña: "
+        contrasena <- getLine
+        if contrasena == "admin" then do
+            putStrLn "Inicio de session exitoso"
+            menuOperativas usuarios
+        else do
+            putStrLn "Contraseña incorrecta"
+            validarInicioSession usuarios
+    else if usuario == "0" then do
         putStrLn "regresando al menu principal"
         menuPrincipal usuarios
     else do
-        putStrLn "Usuario o contraseña incorrectos"
+        putStrLn "Usuario incorrecto"
         validarInicioSession usuarios
 
 
