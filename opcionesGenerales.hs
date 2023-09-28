@@ -14,6 +14,15 @@ data Parqueo = Parqueo {
     yCoord :: Double 
 } deriving (Show)
 
+data Alquiler = Alquiler {
+    idAlquiler :: String,
+    idBicicleta :: String,
+    idUsuario :: String,
+    idParqueoSalida :: String,
+    idParqueoLlegada :: String,
+    estado :: String
+} deriving (Show)
+
 convertirListaAListaDeParqueos :: [[String]] -> [Parqueo]
 convertirListaAListaDeParqueos lista =
     [ Parqueo (head subLista) (subLista !! 1) (subLista !! 2) (subLista !! 3) (read (subLista !! 4) :: Double) (read (subLista !! 5) :: Double) | subLista <- lista ]
@@ -76,3 +85,55 @@ cargarUsuariosAutomatico = do
 
 
 
+-- SECCIÓN ALQUILER 👇
+{-
+El sistema le solicitará al usuario que indique: usuario (cedula), un parqueo de salida y el parqueo de llegada. Posteriormente le mostrará las bicicletas disponibles (identificador y tipo) en el parqueo de salida.
+El usuario indicará el identificador de la bicicleta y se le generará un identificador de alquiler por parte del
+sistema. La bicicleta cambia de ubicación a “tránsito”, se debe generar una estructura de datos con la información
+del alquiler (al menos salida, destino, código de la bicicleta, código del alquiler), este quedará “activo”.
+-}
+
+alquilar :: IO()
+alquilar = do 
+    putStrLn "Ingrese su cedula: "
+    cedula <- getLine
+    datosUsuario <- readFile "./data/usuarios.csv"
+    let usuarios = convertirStringALista datosUsuario
+    let usuario = filter(\x -> x!!0 == cedula) usuarios
+    if usuario == [] then do
+        putStrLn "El usuario no existe"
+    else do
+        putStrLn "Ingrese el parqueo de salida: "
+        nombreParqueoSalida <- getLine
+        parqueos <- cargarParqueosSistema
+        let parqueoSalida = filter(\x -> x!!1 == nombreParqueoSalida) parqueos
+        if parqueoSalida == [] then do
+            putStrLn "El parqueo no existe"
+        else do
+            putStrLn "Ingrese el parqueo de llegada: "
+            nombreParqueoLlegada <- getLine
+            let parqueoLlegada = filter(\x -> x!!1 == nombreParqueoLlegada) parqueos
+            if parqueoLlegada == [] then do
+                putStrLn "El parqueo no existe"
+            else do
+                bicicletas <- cargarBicicletas
+                let bicicletasEnParqueo = filter (\x -> x !! 2 == head parqueoSalida !! 0) bicicletas
+                mostrarBicicletas bicicletasEnParqueo
+                if bicicletasdisponible == [] then do
+                    putStrLn "No hay bicicletas disponibles en el parqueo seleccionado. 😭"
+                else do
+                    putStrLn "Ingrese el id de la bicicleta: "
+                    idBicicleta <- getLine
+                    let bicicletaFiltrada = filter(\x -> x !! 0 == idBicicleta) bicicletasdisponible
+                    if bicicletaFiltrada == [] then do
+                        putStrLn "La bicicleta no existe"
+                    else do
+                        let bicicleta = head bicicleta
+                        putStrLn "alquilando bicicleta"
+                    --     let alquileres = cargarAlquileres
+                    --     let alquileresActivos2 = alquileresActivos alquileres
+                    --     let alquileresActivos3 = map(\x -> [x !! 0, x !! 1, x !! 2, x !! 3, x !! 4])
+    putStr "Presione enter para continuar"
+    opcion <- getLine
+    putStrLn "\ESC[2J"
+    return ()

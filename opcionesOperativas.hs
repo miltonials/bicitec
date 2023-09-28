@@ -136,9 +136,8 @@ menuMostrarBicicletas = do
         if parqueo == [] then do
             putStrLn "No se encontro el parqueo"
         else do
-            let bicicletasEnParqueos = filter (\x -> x !! 2 == head parqueo !! 0) bicicletas
-
-            mostrarBicicletas bicicletasEnParqueos
+            let bicicletasEnParqueo = filter (\x -> x !! 2 == head parqueo !! 0) bicicletas
+            mostrarBicicletas bicicletasEnParqueo
             -- putStr "mostrarBicicletasEnParqueo bicicletas nombreParqueo"
     menuOperativosBicicletas
 

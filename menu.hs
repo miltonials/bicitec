@@ -88,7 +88,9 @@ menuGenerales usuarios = do
     opcion <- getLine
     case opcion of
         "1" -> consultarBicicletas usuarios
-        "2" -> putStrLn "Alquilar bicicletas"
+        "2" -> do 
+            alquilar
+            menuGenerales usuarios
         "3" -> putStrLn "Facurar"
         "4" -> menuPrincipal usuarios
         _ -> do
