@@ -119,20 +119,30 @@ alquilar = do
                 bicicletas <- cargarBicicletas
                 let bicicletasEnParqueo = filter (\x -> x !! 2 == head parqueoSalida !! 0) bicicletas
                 mostrarBicicletas bicicletasEnParqueo
-                if bicicletasdisponible == [] then do
+                if bicicletasEnParqueo == [] then do
                     putStrLn "No hay bicicletas disponibles en el parqueo seleccionado. 😭"
                 else do
                     putStrLn "Ingrese el id de la bicicleta: "
                     idBicicleta <- getLine
-                    let bicicletaFiltrada = filter(\x -> x !! 0 == idBicicleta) bicicletasdisponible
+                    let bicicletaFiltrada = filter(\x -> x !! 0 == idBicicleta) bicicletasEnParqueo
                     if bicicletaFiltrada == [] then do
                         putStrLn "La bicicleta no existe"
                     else do
-                        let bicicleta = head bicicleta
+                        let bicicleta = head bicicletaFiltrada
                         putStrLn "alquilando bicicleta"
-                    --     let alquileres = cargarAlquileres
-                    --     let alquileresActivos2 = alquileresActivos alquileres
-                    --     let alquileresActivos3 = map(\x -> [x !! 0, x !! 1, x !! 2, x !! 3, x !! 4])
+                        alquileres <- cargarAlquileres
+                        print alquileres -- para cerrar el archivo en memoria.
+                        putStrLn "\ESC[2J" -- limpiar consola de lo que se imprimió.
+                        --id,idBici,idUsuario,idParqueoSalida,idParqueoLlegada
+                        let idNuevoAlquiler = show (length alquileres + 1)
+                        let nuevoAlquiler = [[idNuevoAlquiler, idBicicleta, cedula, head parqueoSalida !! 0, head parqueoLlegada !! 0, "1"]]
+                        let datosNuevoAlquiler = convertirListaAString nuevoAlquiler
+                        let bicicletasGeneral = filter(\x -> x !! 0 /= idBicicleta) bicicletas
+                        let listaBicicletasActualizadas = bicicletasGeneral ++ [[bicicleta !! 0, bicicleta !! 1, "transito"]]
+                        let datosBicicletasActualizadas = convertirListaAString listaBicicletasActualizadas
+                        agregarArchivo "./data/alquileres.csv" datosNuevoAlquiler
+                        escribirArchivo "./data/bicicletas.csv" datosBicicletasActualizadas
+                        putStrLn "Bicicleta alquilada exitosamente. 🥳"
     putStr "Presione enter para continuar"
     opcion <- getLine
     putStrLn "\ESC[2J"
