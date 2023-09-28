@@ -55,15 +55,24 @@ cargarParqueosSistema = do
 
 cargarParqueos :: IO [[String]]
 cargarParqueos = do
-    -- let nombreArchivo = "./data/parqueos.csv"
     putStrLn "Ingrese el nombre del archivo: "
     nombreArchivo <- getLine
-    parqueosNuevos <- leerArchivo nombreArchivo
-    parqueosSistema <- leerArchivo "./data/parqueos.csv"
-    let totalParqueos = parqueosNuevos ++ parqueosSistema
-    let lista = convertirStringALista totalParqueos
-    --TODO: eliminar parqueos repetidos y guardarlos en el archivo parqueos.csv
-    return lista
+    if nombreArchivo == "./data/parqueos.csv" then do
+        parqueos <- leerArchivo nombreArchivo
+        let lista = convertirStringALista parqueos
+        return lista
+    else do
+        parqueosNuevos <- leerArchivo nombreArchivo
+        let listaParqueosNuevos = convertirStringALista parqueosNuevos
+        parqueosSistema <- readFile "./data/parqueos.csv"
+        putStr parqueosSistema -- para cerrar el archivo en memoria.
+        putStrLn "\ESC[2J" -- limpiar consola de lo que se imprimió.
+        let listaParqueosSistema = convertirStringALista parqueosSistema
+        let listaParqueos = listaParqueosSistema ++ listaParqueosNuevos
+        let listaFiltrada = nubBy (\x y -> head x == head y) listaParqueos
+        let datosParqueos = convertirListaAString listaFiltrada
+        writeFile "./data/parqueos.csv" datosParqueos
+        return listaFiltrada
 
 mostrarParqueos :: [[String]] -> IO ()
 mostrarParqueos parqueos = do
@@ -86,7 +95,7 @@ mostrarParqueosAux (x:xs) contador = do
     putStrLn("Coordenadas: " ++ x !! 4 ++ ", " ++ x !! 5)
     putStrLn ""
     mostrarParqueosAux xs (contador + 1)
-    
+
 -- Sección de bicicletas 👇
 
 --un menu para mostrar y asignar bicicletas
@@ -116,7 +125,7 @@ menuMostrarBicicletas = do
         mostrarBicicletas bicicletas
     else if nombreParqueo == "transito" then do
         putStrLn "Lista de bicicletas en transito: "
-        alquileres <- cargarAlquileres 
+        alquileres <- cargarAlquileres
         mostrarBicicletas alquileres
     else do
         putStrLn "Lista de bicicletas en el parqueo: "
@@ -128,7 +137,7 @@ menuMostrarBicicletas = do
             putStrLn "No se encontro el parqueo"
         else do
             let bicicletasEnParqueos = filter (\x -> x !! 2 == head parqueo !! 0) bicicletas
-            
+
             mostrarBicicletas bicicletasEnParqueos
             -- putStr "mostrarBicicletasEnParqueo bicicletas nombreParqueo"
     menuOperativosBicicletas
