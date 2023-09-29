@@ -281,7 +281,6 @@ mostrarTop3UsuariosConMayorRecorrido lista contador = do
         mostrarTop3UsuariosConMayorRecorrido (tail lista) (contador + 1)
 
 
-
 -- c) Top 3 de usuarios con más kilómetros recorridos (según fórmula de distancia). Indicar usuario y cantidad.
 top3UsuariosMasKilometrosAux :: IO ()
 top3UsuariosMasKilometrosAux = do 
@@ -299,6 +298,22 @@ top3UsuariosMasKilometrosAux = do
     putStr "Presione enter para continuar"
     opcion <- getLine
     putStrLn "\ESC[2J"
+
+-- d) Resumen: total de viajes, total de kilómetros y total facturado (facturas generadas).
+resumenAux :: IO ()
+resumenAux = do 
+    alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
+    facturas <- cargarArchivoEnLista "./data/facturas.csv"
+    let totalViajes = show (length alquileres)
+    let totalKilometros = show (sum (map (\sublista -> read (sublista !! 5) :: Double) facturas))
+    let totalFacturado = show (sum (map (\sublista -> read (sublista !! 7) :: Double) facturas))
+    putStrLn ("Total de viajes: " ++ totalViajes)
+    putStrLn ("Total de kilometros: " ++ totalKilometros)
+    putStrLn ("Total facturado: " ++ totalFacturado)
+    putStr "Presione enter para continuar"
+    opcion <- getLine
+    putStrLn "\ESC[2J"
+
 
 
 

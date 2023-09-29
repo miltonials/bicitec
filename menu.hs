@@ -46,6 +46,11 @@ top3UsuariosMasKilometros usuarios = do
     top3UsuariosMasKilometrosAux
     menuEstadisticas usuarios
 
+resumen :: [[String]] -> IO ()
+resumen usuarios = do
+    resumenAux
+    menuEstadisticas usuarios
+
 {-
 El sistema debe permitirle al usuario, por medio de un submenú, acceder a las siguientes estadísticas: 
 a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes. 
@@ -66,7 +71,7 @@ menuEstadisticas usuarios = do
         "1" -> top5BicicletasMasUsada usuarios
         "2" -> top5ParqueosMasUsados usuarios
         "3" -> top3UsuariosMasKilometros usuarios
-        "4" -> putStrLn "Resumen"
+        "4" -> resumen usuarios
         "5" -> menuPrincipal usuarios
         _ -> do
             putStrLn "Opcion invalida"
