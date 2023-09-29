@@ -31,6 +31,36 @@ cargarUsuariosAux = do
         putStrLn "Usuarios cargados con exito"
         menuOperativas lista
 
+top5BicicletasMasUsada :: [[String]] -> IO ()
+top5BicicletasMasUsada usuarios = do
+    top5BicicletasMasUsadaAux 
+    menuEstadisticas usuarios
+
+{-
+El sistema debe permitirle al usuario, por medio de un submenú, acceder a las siguientes estadísticas: 
+a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes. 
+b) Top 5 de parqueos con más viajes (salida + destino) indicar parqueo y cantidad de viajes. 
+c) Top 3 de usuarios con más kilómetros recorridos (según fórmula de distancia). Indicar usuario y cantidad.
+d) Resumen: total de viajes, total de kilómetros y total facturado (facturas generadas).
+-}
+menuEstadisticas :: [[String]] -> IO ()
+menuEstadisticas usuarios = do
+    putStrLn "1) Top 5 de bicicletas con más viajes"
+    putStrLn "2) Top 5 de parqueos con más viajes"
+    putStrLn "3) Top 3 de usuarios con más kilómetros recorridos"
+    putStrLn "4) Resumen"
+    putStrLn "5) Volver al menu principal"
+    putStrLn "Ingrese una opcion: "
+    opcion <- getLine
+    case opcion of
+        "1" -> top5BicicletasMasUsada usuarios
+        "2" -> putStrLn "Top 5 de parqueos con más viajes"
+        "3" -> putStrLn "Top 3 de usuarios con más kilómetros recorridos"
+        "4" -> putStrLn "Resumen"
+        "5" -> menuPrincipal usuarios
+        _ -> do
+            putStrLn "Opcion invalida"
+            menuEstadisticas usuarios
     
 -- Menu Operativas
 menuOperativas :: [[String]] -> IO ()
@@ -53,7 +83,7 @@ menuOperativas usuarios = do
             menuOperativosBicicletas
             menuOperativas usuarios
         "3" -> cargarUsuariosAux
-        "4" -> putStrLn "Estadisticas"
+        "4" -> menuEstadisticas usuarios
         "5" -> menuPrincipal usuarios
         _ -> do
             putStrLn "Opcion invalida"

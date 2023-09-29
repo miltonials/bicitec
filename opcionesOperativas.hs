@@ -1,9 +1,12 @@
 module OpcionesOperativas where
 import Archivos
 import Data.Char (toLower)
+import Data.List 
 import Data.List (nubBy, intercalate)
 import Data.Function (on)
 import Data.IORef
+import Data.List (sortOn)
+
 
 
 --SECCION DE USUARIOS 👇
@@ -171,3 +174,39 @@ mostrarBicicletasAux (x:xs) contador = do
         putStrLn ("Parqueo: " ++ head parqueo !! 1)
     putStrLn ""
     mostrarBicicletasAux xs (contador + 1)
+
+-- SECCIÓN DE ESTADÍSTICAS 👇
+contarOcurrenciasBici :: [[String]] -> [[String]] -> [[String]]
+contarOcurrenciasBici lista1 lista2 = map (\sublista -> [head sublista, show (length [x | x <- lista1, x !! 1 == head sublista])]) lista2
+
+mostrarTop5BicicletasMasUsadaAux :: [[String]] -> Int -> IO ()
+mostrarTop5BicicletasMasUsadaAux lista contador = do
+    if lista == [] then do
+        putStrLn "Fin de la lista de bicicletas"
+    else if contador > 5 then do
+        putStrLn "Fin de la lista de bicicletas"
+    else do
+        putStrLn ("Bicicleta #" ++ show contador)
+        putStrLn ("ID: " ++ head (head lista))
+        putStrLn ("Cantidad de viajes: " ++ head (tail (head lista)))
+        putStrLn ""
+        mostrarTop5BicicletasMasUsadaAux (tail lista) (contador + 1)
+
+-- a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes.
+top5BicicletasMasUsadaAux :: IO ()
+top5BicicletasMasUsadaAux = do 
+    bicicletas <- cargarArchivoEnLista "./data/bicicletas.csv"
+    alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
+    let lista = contarOcurrenciasBici alquileres bicicletas
+    -- se ordena la lista de listas de strings por la cantidad de veces que se repite
+    let listaOrdenada = reverse (sortOn (\x -> read (x !! 1) :: Int) lista)
+    -- se imprime la lista de listas de strings
+    putStrLn "Top 5 de bicicletas con más viajes"
+    mostrarTop5BicicletasMasUsadaAux listaOrdenada 1
+    putStr "Presione enter para continuar"
+    opcion <- getLine
+    putStrLn "\ESC[2J"
+
+
+
+
