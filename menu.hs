@@ -36,6 +36,11 @@ top5BicicletasMasUsada usuarios = do
     top5BicicletasMasUsadaAux 
     menuEstadisticas usuarios
 
+top5ParqueosMasUsados :: [[String]] -> IO ()
+top5ParqueosMasUsados usuarios = do
+    top5ParqueosMasUsadosAux
+    menuEstadisticas usuarios
+
 {-
 El sistema debe permitirle al usuario, por medio de un submenú, acceder a las siguientes estadísticas: 
 a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes. 

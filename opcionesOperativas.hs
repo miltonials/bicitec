@@ -179,6 +179,11 @@ mostrarBicicletasAux (x:xs) contador = do
 contarOcurrenciasBici :: [[String]] -> [[String]] -> [[String]]
 contarOcurrenciasBici lista1 lista2 = map (\sublista -> [head sublista, show (length [x | x <- lista1, x !! 1 == head sublista])]) lista2
 
+-- retorna id, cantidad, nombre del parqueo(es el segundo elemento de cada sublista de la lista2)
+-- la cantidad de veces que se repite el id del parqueo en la lista1 se cuenta la tanto en la columna 2 como en la columna 3
+contarOcurrenciasParqueo :: [[String]] -> [[String]] -> [[String]]
+contarOcurrenciasParqueo lista1 lista2 = map (\sublista -> [head sublista, show (length [x | x <- lista1, x !! 3 == head sublista || x !! 4 == head sublista]), head (tail sublista)]) lista2
+
 mostrarTop5BicicletasMasUsadaAux :: [[String]] -> Int -> IO ()
 mostrarTop5BicicletasMasUsadaAux lista contador = do
     if lista == [] then do
@@ -191,6 +196,23 @@ mostrarTop5BicicletasMasUsadaAux lista contador = do
         putStrLn ("Cantidad de viajes: " ++ head (tail (head lista)))
         putStrLn ""
         mostrarTop5BicicletasMasUsadaAux (tail lista) (contador + 1)
+
+
+mostrarTop5PaqueosMasUsadosAux :: [[String]] -> Int -> IO ()
+mostrarTop5PaqueosMasUsadosAux lista contador = do
+    if lista == [] then do
+        putStrLn "Fin de la lista de parqueos"
+    else if contador > 5 then do
+        putStrLn "Fin de la lista de parqueos"
+    else do
+        let id = head (head lista)
+        putStrLn ("Parqueo #" ++ show contador)
+        putStrLn ("ID: " ++ id)
+        let nombre = head (tail (tail (head lista)))
+        putStrLn ("Nombre: " ++ nombre)
+        putStrLn ("Cantidad de viajes: " ++ head (tail (head lista)))
+        putStrLn ""
+        mostrarTop5PaqueosMasUsadosAux (tail lista) (contador + 1)
 
 -- a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes.
 top5BicicletasMasUsadaAux :: IO ()
@@ -206,6 +228,24 @@ top5BicicletasMasUsadaAux = do
     putStr "Presione enter para continuar"
     opcion <- getLine
     putStrLn "\ESC[2J"
+
+-- b) Top 5 de parqueos con más viajes (salida + destino) indicar parqueo y cantidad de viajes.
+top5ParqueosMasUsadosAux :: IO ()
+top5ParqueosMasUsadosAux = do 
+    alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
+    parqueos <- cargarArchivoEnLista "./data/parqueos.csv"
+    let lista = contarOcurrenciasParqueo alquileres parqueos
+    print lista
+    -- se ordena la lista de listas de strings por la cantidad de veces que se repite
+    let listaOrdenada = reverse (sortOn (\x -> read (x !! 1) :: Int) lista)
+    -- se imprime la lista de listas de strings
+    putStrLn "Top 5 de parqueos con más viajes"
+    mostrarTop5PaqueosMasUsadosAux listaOrdenada 1
+    putStr "Presione enter para continuar"
+    opcion <- getLine
+    putStrLn "\ESC[2J"
+
+
 
 
 
