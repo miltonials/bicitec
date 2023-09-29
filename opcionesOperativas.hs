@@ -235,7 +235,7 @@ top5ParqueosMasUsadosAux = do
     alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
     parqueos <- cargarArchivoEnLista "./data/parqueos.csv"
     let lista = contarOcurrenciasParqueo alquileres parqueos
-    print lista
+    -- print lista
     -- se ordena la lista de listas de strings por la cantidad de veces que se repite
     let listaOrdenada = reverse (sortOn (\x -> read (x !! 1) :: Int) lista)
     -- se imprime la lista de listas de strings
@@ -245,7 +245,60 @@ top5ParqueosMasUsadosAux = do
     opcion <- getLine
     putStrLn "\ESC[2J"
 
+{-
+recibe 2 lista 
+lista1: [["1","B1","87654321","1","2","100.0","103.31740076095622"]]
+lista2: [["87654321","Andy Porras\r"],["12345678","Milton Barrera\r"],["46874545","Carlos Perez\r"],["98726345","Juanita Fernandez\r"]]
+retorna una lista de listas de strings con el id del usuario y la suma de los kilometros recorridos
+-}
+contarOcurrenciasUsuarios :: [[String]] -> [[String]] -> [[String]]
+contarOcurrenciasUsuarios lista1 lista2 =
+  let resultado = map (\sublista2 ->
+                          let idUsuario = head sublista2
+                              nombre =  (sublista2 !! 1)
+                              cantidadRecorrido = sum (map (\sublista1 ->
+                                                              let idUsuario2 = sublista1 !! 2
+                                                                  cantidadRecorrido2 = (read (sublista1 !! 5) :: Double)
+                                                              in if idUsuario == idUsuario2 then cantidadRecorrido2 else 0
+                                                          ) lista1)
+                          in [idUsuario, nombre, show cantidadRecorrido]
+                      ) lista2
+  in resultado
 
+mostrarTop3UsuariosConMayorRecorrido :: [[String]] -> Int -> IO ()
+mostrarTop3UsuariosConMayorRecorrido lista contador = do
+    if lista == [] then do
+        putStrLn "Fin de la lista de usuarios"
+    else if contador > 3 then do
+        putStrLn "Fin de la lista de usuarios"
+    else do
+        putStrLn ("Usuario #" ++ show contador)
+        putStrLn ("ID: " ++ head (head lista))
+        let nombre = head (tail (head lista))
+        putStrLn ("Nombre: " ++ nombre)
+        putStrLn ("Cantidad de kilometros recorridos: " ++ head (tail (tail (head lista))))
+        putStrLn ""
+        mostrarTop3UsuariosConMayorRecorrido (tail lista) (contador + 1)
+
+
+
+-- c) Top 3 de usuarios con más kilómetros recorridos (según fórmula de distancia). Indicar usuario y cantidad.
+top3UsuariosMasKilometrosAux :: IO ()
+top3UsuariosMasKilometrosAux = do 
+    facturas <- cargarArchivoEnLista "./data/facturas.csv"
+    usuarios <- cargarArchivoEnLista "./data/usuarios.csv" 
+    print facturas
+    print usuarios
+    let lista = contarOcurrenciasUsuarios facturas usuarios
+    print lista
+    -- se ordena la lista de listas de strings por la cantidad de veces que se repite
+    let listaOrdenada = reverse (sortOn (\x -> read (x !! 2) :: Double) lista)
+    -- se imprime la lista de listas de strings
+    putStrLn "Top 3 de usuarios con más kilómetros recorridos"
+    mostrarTop3UsuariosConMayorRecorrido listaOrdenada 1
+    putStr "Presione enter para continuar"
+    opcion <- getLine
+    putStrLn "\ESC[2J"
 
 
 

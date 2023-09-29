@@ -41,6 +41,11 @@ top5ParqueosMasUsados usuarios = do
     top5ParqueosMasUsadosAux
     menuEstadisticas usuarios
 
+top3UsuariosMasKilometros :: [[String]] -> IO ()
+top3UsuariosMasKilometros usuarios = do
+    top3UsuariosMasKilometrosAux
+    menuEstadisticas usuarios
+
 {-
 El sistema debe permitirle al usuario, por medio de un submenú, acceder a las siguientes estadísticas: 
 a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes. 
@@ -59,8 +64,8 @@ menuEstadisticas usuarios = do
     opcion <- getLine
     case opcion of
         "1" -> top5BicicletasMasUsada usuarios
-        "2" -> putStrLn "Top 5 de parqueos con más viajes"
-        "3" -> putStrLn "Top 3 de usuarios con más kilómetros recorridos"
+        "2" -> top5ParqueosMasUsados usuarios
+        "3" -> top3UsuariosMasKilometros usuarios
         "4" -> putStrLn "Resumen"
         "5" -> menuPrincipal usuarios
         _ -> do

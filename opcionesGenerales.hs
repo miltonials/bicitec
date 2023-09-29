@@ -299,8 +299,8 @@ facturarAux = do
         bicicletas <- cargarArchivoEnLista "./data/bicicletas.csv"
         print bicicletas -- para cerrar el archivo en memoria.
         putStrLn "\ESC[2J" -- limpiar consola de lo que se imprimió.
-        -- guardar factura en archivo, datos de la factura: id, idBicicleta, idUsuario, idParqueoSalida, idParqueoLlegada, tarifa, total
-        let nuevaFactura = [[idFacturaString, (head alquileresSegunId) !! 1, (head alquileresSegunId) !! 2, (head alquileresSegunId) !! 3, (head alquileresSegunId) !! 4, tarifaString, totalString]]
+        -- guardar factura en archivo, datos de la factura: id, idBicicleta, idUsuario, idParqueoSalida, idParqueoLlegada,distancia, tarifa, total
+        let nuevaFactura = [[idFacturaString, (head alquileresSegunId) !! 1, (head alquileresSegunId) !! 2, (head alquileresSegunId) !! 3, (head alquileresSegunId) !! 4, kilometrosString, tarifaString, totalString]]
         -- guardarFacturaEnArchivo nuevaFactura alquileres bicicletas 
         let datosNuevaFactura = convertirListaAString nuevaFactura
         agregarArchivo "./data/facturas.csv" datosNuevaFactura
