@@ -58,6 +58,7 @@ menuOperativas usuarios = do
         _ -> do
             putStrLn "Opcion invalida"
             menuOperativas usuarios
+
 filtrarPorId :: String -> [[String]] -> [[String]]
 filtrarPorId idBuscado lista = filter (\sublista -> sublista !! 2 == idBuscado) lista
 
@@ -78,6 +79,13 @@ consultarBicicletas usuarios = do
     opcion <- getLine
     menuGenerales usuarios
 
+facturar :: [[String]] -> IO ()
+facturar usuarios = do
+    facturarAux
+    putStrLn "Presione enter para volver..."
+    opcion <- getLine
+    menuGenerales usuarios
+
 menuGenerales :: [[String]] -> IO ()
 menuGenerales usuarios = do
     putStrLn "1) Consultar bicicletas"
@@ -91,7 +99,7 @@ menuGenerales usuarios = do
         "2" -> do 
             alquilar
             menuGenerales usuarios
-        "3" -> putStrLn "Facurar"
+        "3" -> facturar usuarios
         "4" -> menuPrincipal usuarios
         _ -> do
             putStrLn "Opcion invalida"

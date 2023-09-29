@@ -39,3 +39,21 @@ cargarArchivoEnLista nombre = do
     datos <- leerArchivo nombre
     let lista = convertirStringALista datos
     return lista
+
+cargarAlquileresSistema :: IO [[String]]
+cargarAlquileresSistema = do
+    alquileres <- leerArchivo "./data/alquileres.csv"
+    let lista = convertirStringALista alquileres
+    print lista
+    return lista
+
+cargarFacturasSistema :: IO [[String]]
+cargarFacturasSistema = do
+    facturas <- leerArchivo "./data/facturas.csv"
+    let lista = convertirStringALista facturas
+    return lista
+
+-- funccion que cierra un archivo
+cerrarArchivo :: String -> IO ()
+cerrarArchivo nombre = do
+    writeFile nombre ""
