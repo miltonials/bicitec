@@ -111,7 +111,7 @@ menuOperativosBicicletas = do
     opcion <- getLine
     case opcion of
         "1" -> menuMostrarBicicletas
-        "2" -> putStrLn "Asignar bicicletas"
+        "2" -> asignarBicicletas
         "3" -> putStrLn "Volver al menu operativas"
         _ -> do
             putStrLn "Opcion invalida"
@@ -314,7 +314,48 @@ resumenAux = do
     opcion <- getLine
     putStrLn "\ESC[2J"
 
+-- lo que hace esta funcion es solicitar una ruta de un archivo csv al usuario que cada linea tendrá idBicicleta, idParqueo
+--Despues de obtener la información del archivo entonces a cada bicicleta en el sistema se le asigna el parqueo si es que este existe y si la bicicleta no esta en transito.
+asignarBicicletas :: IO()
+asignarBicicletas = do
+    putStrLn "Ingrese el nombre del archivo: "
+    nombreArchivo <- getLine
+    datos <- leerArchivo nombreArchivo
+    let lista = convertirStringALista datos
+    
+    if lista == [] then do
+        putStrLn "El archivo que ingresaste está vacío."
+    else
+        asignarBicicletasAux lista
+    
+    putStrLn "El lote de bicicletas se ha actualizado."
 
-
-
-
+asignarBicicletasAux :: [[String]] -> IO()
+asignarBicicletasAux [] = do
+    putStrLn "Fin de la lista de bicicletas"
+asignarBicicletasAux (x:xs) = do
+    bicicletas <- cargarBicicletas -- [[id, tipo, id_parqueo]]
+    parqueos <- cargarParqueosSistema -- [[id, nombre, direccion, provincia, latitud, longitud]]
+    print bicicletas
+    print parqueos
+    putStrLn "\ESC[2J"
+    let bicicleta = filter (\y -> y !! 0 ==  x !! 0) bicicletas
+    let parqueo = filter (\y -> y !! 0 == x !! 1) parqueos
+    if bicicleta == [] then do
+        putStrLn ("× La bicicleta con id " ++ head x ++ " no existe")
+    else if parqueo == [] then do
+        putStrLn ("× El parqueo con id " ++ head (tail x) ++ " no existe")
+    else if head bicicleta !! 2 == "transito" then do
+        putStrLn ("× La bicicleta con id " ++ head x ++ "  está en transito")
+    else if head bicicleta !! 2 == head parqueo !! 0 then do
+        putStrLn ("× La bicicleta ya está en el parqueo.")
+    else do
+        let bicicletasSinCambios = filter (\y -> y !! 0 /=  x !! 0) bicicletas
+        let bicicletaNuevaInfo  = [[head bicicleta !! 0, head bicicleta !! 1, head parqueo !! 0]]
+        let nuevoLoteBicicletas = bicicletasSinCambios ++ bicicletaNuevaInfo
+        let loteBicicletas_datosActualizados = convertirListaAString nuevoLoteBicicletas
+        print bicicletas
+        print parqueos
+        putStrLn "\ESC[2J"
+        writeFile "./data/bicicletas.csv" loteBicicletas_datosActualizados
+    asignarBicicletasAux xs

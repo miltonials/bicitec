@@ -13,8 +13,3 @@ main :: IO ()
 main = do
     let usuarios = []
     menuPrincipal usuarios
-    {-
-    -- top5BicicletasMasUsadaAux
-    -}
-    print "hola"
- 
