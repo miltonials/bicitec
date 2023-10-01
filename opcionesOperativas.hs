@@ -2,10 +2,6 @@ module OpcionesOperativas where
 import Archivos
 import Data.Char (toLower)
 import Data.List 
-import Data.List (nubBy, intercalate)
-import Data.Function (on)
-import Data.IORef
-import Data.List (sortOn)
 
 
 
@@ -27,7 +23,7 @@ convertirListaAString lista = intercalate "\n" (map (intercalate ",") lista)
 -- y los almacena en una lista de usuarios y lo retorna
 cargarUsuarios :: IO [[String]]
 cargarUsuarios = do
-    putStrLn "Ingrese el nombre del archivo: "
+    putStr "Ingrese el nombre del archivo: "
     nombreArchivo <- getLine
     datos <- leerArchivo nombreArchivo
     lista2 <- cargarUsuariosDesdeArchivo "./data/usuarioss.csv"
@@ -58,7 +54,7 @@ cargarParqueosSistema = do
 
 cargarParqueos :: IO [[String]]
 cargarParqueos = do
-    putStrLn "Ingrese el nombre del archivo: "
+    putStr "Ingrese el nombre del archivo: "
     nombreArchivo <- getLine
     if nombreArchivo == "./data/parqueos.csv" then do
         parqueos <- leerArchivo nombreArchivo
@@ -104,10 +100,11 @@ mostrarParqueosAux (x:xs) contador = do
 --un menu para mostrar y asignar bicicletas
 menuOperativosBicicletas :: IO ()
 menuOperativosBicicletas = do
+    putStrLn "\ESC[2J"
     putStrLn "1) Mostrar bicicletas"
     putStrLn "2) Asignar bicicletas"
     putStrLn "3) Volver al menu operativas"
-    putStrLn "Ingrese una opcion: "
+    putStr "Ingrese una opcion: "
     opcion <- getLine
     case opcion of
         "1" -> menuMostrarBicicletas
@@ -119,7 +116,7 @@ menuOperativosBicicletas = do
 
 menuMostrarBicicletas :: IO ()
 menuMostrarBicicletas = do
-    putStrLn "Ingrese el nombre del parqueo: "
+    putStr "Ingrese el nombre del parqueo: "
     nombreParqueo <- getLine
     bicicletas <- cargarBicicletas -- [[id, tipo, id_parqueo]]
     -- al indicar nombre “#”, muestra todas las bicicletas del sistema, al indicar “transito”, mostrará las bicicletas en tránsito (activas en alquiler).
@@ -318,7 +315,7 @@ resumenAux = do
 --Despues de obtener la información del archivo entonces a cada bicicleta en el sistema se le asigna el parqueo si es que este existe y si la bicicleta no esta en transito.
 asignarBicicletas :: IO()
 asignarBicicletas = do
-    putStrLn "Ingrese el nombre del archivo: "
+    putStr "Ingrese el nombre del archivo: "
     nombreArchivo <- getLine
     datos <- leerArchivo nombreArchivo
     let lista = convertirStringALista datos

@@ -2,8 +2,6 @@ module Menu where
 import Archivos
 import OpcionesOperativas
 import OpcionesGenerales
-import System.IO.Unsafe
-import Data.IORef
 
 data Parqueo = Parqueo { 
     idParqueo :: String, 
@@ -60,12 +58,13 @@ d) Resumen: total de viajes, total de kilómetros y total facturado (facturas ge
 -}
 menuEstadisticas :: [[String]] -> IO ()
 menuEstadisticas usuarios = do
+    putStrLn "\ESC[2J"
     putStrLn "1) Top 5 de bicicletas con más viajes"
     putStrLn "2) Top 5 de parqueos con más viajes"
     putStrLn "3) Top 3 de usuarios con más kilómetros recorridos"
     putStrLn "4) Resumen"
     putStrLn "5) Volver al menu principal"
-    putStrLn "Ingrese una opcion: "
+    putStr "Ingrese una opcion: "
     opcion <- getLine
     case opcion of
         "1" -> top5BicicletasMasUsada usuarios
@@ -80,12 +79,13 @@ menuEstadisticas usuarios = do
 -- Menu Operativas
 menuOperativas :: [[String]] -> IO ()
 menuOperativas usuarios = do 
+    putStrLn "\ESC[2J"
     putStrLn "1) Cargar y Mostrar parqueos"
     putStrLn "2) Mostrar y asignar bicicletas"
     putStrLn "3) Cargar usuarios"
     putStrLn "4) Estadisticas"
     putStrLn "5) Volver al menu principal"
-    putStrLn "Ingrese una opcion: "
+    putStr "Ingrese una opcion: "
     opcion <- getLine
     case opcion of
         "1" -> do 
@@ -113,10 +113,7 @@ consultarBicicletas usuarios = do
     let idParqueoCercano = parqueoCercano
     bicicletas <- cargarArchivoEnLista "./data/bicicletas.csv"
     putStrLn "id parqueo: "
-    -- print idParqueoCercano
-    -- print bicicletas
     let listaConfigurada = quitarCaracterTercerElemento bicicletas
-    -- print listaConfigurada
     let bicicletasdisponible = filtrarPorId idParqueoCercano listaConfigurada
     putStr "Bicicletas disponibles: "
     print bicicletasdisponible
@@ -133,11 +130,12 @@ facturar usuarios = do
 
 menuGenerales :: [[String]] -> IO ()
 menuGenerales usuarios = do
+    putStrLn "\ESC[2J"
     putStrLn "1) Consultar bicicletas"
     putStrLn "2) Alquilar bicicletas"
     putStrLn "3) Facurar"
     putStrLn "4) Volver al menu principal"
-    putStrLn "Ingrese una opcion: "
+    putStr "Ingrese una opcion: "
     opcion <- getLine
     case opcion of
         "1" -> consultarBicicletas usuarios
@@ -153,12 +151,13 @@ menuGenerales usuarios = do
 -- se valida el inicio de session, osea que el usuario y la contraseña sean correctos
 validarInicioSession :: [[String]] -> IO () 
 validarInicioSession usuarios = do 
-    putStrLn "Ingrese su usuario: "
+    putStr "Ingrese su usuario: "
     usuario <- getLine
     if usuario == "admin" then do
-        putStrLn "\nIngrese su contraseña: "
+        putStr "Ingrese su contraseña: "
         contrasena <- getLine
         if contrasena == "admin" then do
+            putStrLn "\ESC[2J"
             putStrLn "Inicio de session exitoso"
             menuOperativas usuarios
         else do

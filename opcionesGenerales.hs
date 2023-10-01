@@ -1,8 +1,6 @@
 module OpcionesGenerales where
-import Data.IORef
 import Archivos
 import Data.List (nubBy, intercalate)
-import Data.Function (on)
 import OpcionesOperativas
 
 data Parqueo = Parqueo { 
