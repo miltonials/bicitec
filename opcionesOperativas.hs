@@ -7,20 +7,29 @@ import Data.List
 
 --SECCION DE USUARIOS 👇
 {-
-recibe 2 listas de listas de strings y compara si las cedulas de la primera lista son iguales a las de la segunda lista
-retorna una lista de listas de strings con los usuarios sin repetir si es que hay repetidos
-ejemplo: [["55454464,"andy"],["5484448","juan"],["55454464,"andy"]] -> [["55454464,"andy"],["5484448","juan"]]
+@name eliminarRepetidosPorPrimerValor
+@description elimina los elementos repetidos de una lista de listas de strings
+@params lista de listas de strings
+@returns lista de listas de strings sin elementos repetidos
 -}
--- Función que elimina duplicados basados en el primer valor de cada sublista
 eliminarRepetidosPorPrimerValor :: [[String]] -> [[String]]
 eliminarRepetidosPorPrimerValor = nubBy (\x y -> head x == head y)
 
--- Función que convierte la lista de listas en un solo string
+{-
+@name convertirListaAString
+@description convierte una lista de listas de strings a un string
+@params lista de listas de strings
+@returns string
+-}
 convertirListaAString :: [[String]] -> String
 convertirListaAString lista = intercalate "\n" (map (intercalate ",") lista)
 
--- cargar los usuarios desde un archivo indicado por el usuario
--- y los almacena en una lista de usuarios y lo retorna
+{-
+@name cargarUsuarios
+@description carga los usuarios desde el archivo ./data/usuarios.csv
+@params none
+@returns lista de listas de strings
+-}
 cargarUsuarios :: IO [[String]]
 cargarUsuarios = do
     putStr "Ingrese el nombre del archivo: "
@@ -35,23 +44,46 @@ cargarUsuarios = do
     return lista4
 
 -- SECCION DE ALQUILERES 👇
+{-
+@name cargarAlquileres
+@description carga los alquileres desde el archivo ./data/alquileres.csv
+@params none
+@returns lista de listas de strings
+-}
 cargarAlquileres:: IO [[String]]
 cargarAlquileres = do
     datos <- leerArchivo "./data/alquileres.csv"
     let lista = convertirStringALista datos
     return lista
 
+{-
+@name alquileresActivos
+@description filtra los alquileres que estan activos
+@params lista de listas de strings
+@returns lista de listas de strings
+-}
 alquileresActivos :: [[String]] -> [[String]]
 alquileresActivos alquileres = filter (\x -> x !! 5 == "1") alquileres
 
 -- SECCIÓN DE PARQUEOS 👇
--- cargar parqueos desde el archivo ./data/parqueos.csv
+{-
+@name cargarParqueosSistema
+@description carga los parqueos desde el archivo ./data/parqueos.csv
+@params none
+@returns lista de listas de strings
+-}
 cargarParqueosSistema :: IO [[String]]
 cargarParqueosSistema = do
     parqueos <- leerArchivo "./data/parqueos.csv"
     let lista = convertirStringALista parqueos
     return lista
 
+{-
+@name cargarParqueos
+@description carga los parqueos desde el archivo ./data/parqueos.csv
+@params none   
+@returns lista de listas de strings
+-}
 cargarParqueos :: IO [[String]]
 cargarParqueos = do
     putStr "Ingrese el nombre del archivo: "
@@ -73,16 +105,23 @@ cargarParqueos = do
         writeFile "./data/parqueos.csv" datosParqueos
         return listaFiltrada
 
+{-
+@name mostrarParqueos
+@description muestra los parqueos
+@params lista de listas de strings
+@returns none
+-}
 mostrarParqueos :: [[String]] -> IO ()
 mostrarParqueos parqueos = do
     putStrLn "Lista de parqueos: "
     mostrarParqueosAux parqueos 1
 
--- función auxiliar para mostrar los parqueos
-mostrarParqueosAux :: [[String]] -> Int -> IO ()
-mostrarParqueosAux [] _ = do
-    putStrLn "Fin de la lista de parqueos"
-
+{-
+@name mostrarParqueosAux
+@description función auxiliar para mostrar los parqueos
+@params lista de listas de strings, contador
+@returns none
+-}
 mostrarParqueosAux (x:xs) contador = do
     putStrLn ("Parqueo #" ++ show contador)
     putStrLn ("ID: " ++ head x)
@@ -97,7 +136,12 @@ mostrarParqueosAux (x:xs) contador = do
 
 -- Sección de bicicletas 👇
 
---un menu para mostrar y asignar bicicletas
+{-
+@name menuOperativosBicicletas
+@description muestra el menu de operativos de bicicletas
+@params none
+@returns none
+-}
 menuOperativosBicicletas :: IO ()
 menuOperativosBicicletas = do
     putStrLn "\ESC[2J"
@@ -114,6 +158,12 @@ menuOperativosBicicletas = do
             putStrLn "Opcion invalida"
             menuOperativosBicicletas
 
+{-
+@name menuMostrarBicicletas
+@description muestra el menu de mostrar bicicletas
+@params none
+@returns none
+-}
 menuMostrarBicicletas :: IO ()
 menuMostrarBicicletas = do
     putStr "Ingrese el nombre del parqueo: "
@@ -141,23 +191,34 @@ menuMostrarBicicletas = do
             -- putStr "mostrarBicicletasEnParqueo bicicletas nombreParqueo"
     menuOperativosBicicletas
 
--- cargar bicicletas desde el archivo ./data/bicicletas.csv
+{-
+@name cargarBicicletas
+@description carga las bicicletas desde el archivo ./data/bicicletas.csv
+@params none
+@returns lista de listas de strings
+-}
 cargarBicicletas :: IO [[String]]
 cargarBicicletas = do
     datos <- leerArchivo "./data/bicicletas.csv"
     let lista = convertirStringALista datos
     return lista
 
--- mostrar bicicletas en el sistema
+{-
+@name mostrarBicicletas
+@description muestra las bicicletas
+@params lista de listas de strings
+@returns none
+-}
 mostrarBicicletas :: [[String]] -> IO ()
 mostrarBicicletas bicicletas = do
     mostrarBicicletasAux bicicletas 1
 
--- función auxiliar para mostrar las bicicletas
-mostrarBicicletasAux :: [[String]] -> Int -> IO ()
-mostrarBicicletasAux [] _ = do
-    putStrLn "Fin de la lista de bicicletas"
-
+{-
+@name mostrarBicicletasAux
+@description función auxiliar para mostrar las bicicletas
+@params lista de listas de strings, contador
+@returns none
+-}
 mostrarBicicletasAux (x:xs) contador = do
     parqueos <- cargarParqueosSistema -- [[id, nombre, direccion, provincia, latitud, longitud]]
     let parqueo = filter (\y -> y !! 0 == x !! 2) parqueos
@@ -173,14 +234,31 @@ mostrarBicicletasAux (x:xs) contador = do
     mostrarBicicletasAux xs (contador + 1)
 
 -- SECCIÓN DE ESTADÍSTICAS 👇
+
+{-
+@name contarOcurrenciasBici
+@description retorna id, cantidad de veces que se repite el id en la lista1
+@params lista de listas de strings, lista de listas de strings
+@returns lista de listas de strings
+-}
 contarOcurrenciasBici :: [[String]] -> [[String]] -> [[String]]
 contarOcurrenciasBici lista1 lista2 = map (\sublista -> [head sublista, show (length [x | x <- lista1, x !! 1 == head sublista])]) lista2
 
--- retorna id, cantidad, nombre del parqueo(es el segundo elemento de cada sublista de la lista2)
--- la cantidad de veces que se repite el id del parqueo en la lista1 se cuenta la tanto en la columna 2 como en la columna 3
+{-
+@name contarOcurrenciasParqueo
+@description retorna id, cantidad de veces que se repite el id en la lista1
+@params lista de listas de strings, lista de listas de strings
+@returns lista de listas de strings
+-}
 contarOcurrenciasParqueo :: [[String]] -> [[String]] -> [[String]]
 contarOcurrenciasParqueo lista1 lista2 = map (\sublista -> [head sublista, show (length [x | x <- lista1, x !! 3 == head sublista || x !! 4 == head sublista]), head (tail sublista)]) lista2
 
+{-
+@name mostrarTop5BicicletasMasUsadaAux
+@description muestra el top 5 de bicicletas mas usadas
+@params lista de listas de strings, contador    
+@returns none
+-}
 mostrarTop5BicicletasMasUsadaAux :: [[String]] -> Int -> IO ()
 mostrarTop5BicicletasMasUsadaAux lista contador = do
     if lista == [] then do
@@ -195,6 +273,12 @@ mostrarTop5BicicletasMasUsadaAux lista contador = do
         mostrarTop5BicicletasMasUsadaAux (tail lista) (contador + 1)
 
 
+{-
+@name mostrarTop5PaqueosMasUsadosAux
+@description muestra el top 5 de parqueos mas usados
+@params lista de listas de strings, contador
+@returns none
+-}
 mostrarTop5PaqueosMasUsadosAux :: [[String]] -> Int -> IO ()
 mostrarTop5PaqueosMasUsadosAux lista contador = do
     if lista == [] then do
@@ -211,7 +295,12 @@ mostrarTop5PaqueosMasUsadosAux lista contador = do
         putStrLn ""
         mostrarTop5PaqueosMasUsadosAux (tail lista) (contador + 1)
 
--- a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes.
+{-
+@name top5BicicletasMasUsadaAux
+@description muestra el top 5 de bicicletas mas usadas
+@params none
+@returns none
+-}
 top5BicicletasMasUsadaAux :: IO ()
 top5BicicletasMasUsadaAux = do 
     bicicletas <- cargarArchivoEnLista "./data/bicicletas.csv"
@@ -226,7 +315,12 @@ top5BicicletasMasUsadaAux = do
     opcion <- getLine
     putStrLn "\ESC[2J"
 
--- b) Top 5 de parqueos con más viajes (salida + destino) indicar parqueo y cantidad de viajes.
+{-
+@name top5ParqueosMasUsadosAux
+@description muestra el top 5 de parqueos mas usados
+@params none
+@returns none
+-}
 top5ParqueosMasUsadosAux :: IO ()
 top5ParqueosMasUsadosAux = do 
     alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
@@ -243,10 +337,10 @@ top5ParqueosMasUsadosAux = do
     putStrLn "\ESC[2J"
 
 {-
-recibe 2 lista 
-lista1: [["1","B1","87654321","1","2","100.0","103.31740076095622"]]
-lista2: [["87654321","Andy Porras\r"],["12345678","Milton Barrera\r"],["46874545","Carlos Perez\r"],["98726345","Juanita Fernandez\r"]]
-retorna una lista de listas de strings con el id del usuario y la suma de los kilometros recorridos
+@name contarOcurrenciasUsuarios
+@description retorna id, nombre, cantidad de kilometros recorridos
+@params lista de listas de strings, lista de listas de strings
+@returns lista de listas de strings
 -}
 contarOcurrenciasUsuarios :: [[String]] -> [[String]] -> [[String]]
 contarOcurrenciasUsuarios lista1 lista2 =
@@ -262,6 +356,12 @@ contarOcurrenciasUsuarios lista1 lista2 =
                       ) lista2
   in resultado
 
+{-
+@name mostrarTop3UsuariosConMayorRecorrido
+@description muestra el top 3 de usuarios con mayor recorrido
+@params lista de listas de strings, contador
+@returns none
+-}
 mostrarTop3UsuariosConMayorRecorrido :: [[String]] -> Int -> IO ()
 mostrarTop3UsuariosConMayorRecorrido lista contador = do
     if lista == [] then do
@@ -278,7 +378,12 @@ mostrarTop3UsuariosConMayorRecorrido lista contador = do
         mostrarTop3UsuariosConMayorRecorrido (tail lista) (contador + 1)
 
 
--- c) Top 3 de usuarios con más kilómetros recorridos (según fórmula de distancia). Indicar usuario y cantidad.
+{-
+@name top3UsuariosMasKilometrosAux
+@description muestra el top 3 de usuarios con mayor recorrido
+@params none
+@returns none
+-}
 top3UsuariosMasKilometrosAux :: IO ()
 top3UsuariosMasKilometrosAux = do 
     facturas <- cargarArchivoEnLista "./data/facturas.csv"
@@ -296,12 +401,17 @@ top3UsuariosMasKilometrosAux = do
     opcion <- getLine
     putStrLn "\ESC[2J"
 
--- d) Resumen: total de viajes, total de kilómetros y total facturado (facturas generadas).
+{-
+@name resumen
+@description muestra el resumen de viajes, kilometros y facturado
+@params none
+@returns none
+-}
 resumenAux :: IO ()
 resumenAux = do 
-    alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
+    -- alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
     facturas <- cargarArchivoEnLista "./data/facturas.csv"
-    let totalViajes = show (length alquileres)
+    let totalViajes = show (length facturas)
     let totalKilometros = show (sum (map (\sublista -> read (sublista !! 5) :: Double) facturas))
     let totalFacturado = show (sum (map (\sublista -> read (sublista !! 7) :: Double) facturas))
     putStrLn ("Total de viajes: " ++ totalViajes)
@@ -311,8 +421,12 @@ resumenAux = do
     opcion <- getLine
     putStrLn "\ESC[2J"
 
--- lo que hace esta funcion es solicitar una ruta de un archivo csv al usuario que cada linea tendrá idBicicleta, idParqueo
---Despues de obtener la información del archivo entonces a cada bicicleta en el sistema se le asigna el parqueo si es que este existe y si la bicicleta no esta en transito.
+{-
+@name asignarBicicletas
+@description asigna bicicletas a un parqueo
+@params none
+@returns none
+-}
 asignarBicicletas :: IO()
 asignarBicicletas = do
     putStr "Ingrese el nombre del archivo: "
@@ -326,7 +440,13 @@ asignarBicicletas = do
         asignarBicicletasAux lista
     
     putStrLn "El lote de bicicletas se ha actualizado."
-
+    
+{-
+@name asignarBicicletasAux
+@description función auxiliar para asignar bicicletas
+@params lista de listas de strings
+@returns none
+-}
 asignarBicicletasAux :: [[String]] -> IO()
 asignarBicicletasAux [] = do
     putStrLn "Fin de la lista de bicicletas"

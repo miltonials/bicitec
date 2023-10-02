@@ -3,6 +3,16 @@ import Archivos
 import Data.List (nubBy, intercalate)
 import OpcionesOperativas
 
+{-
+    @constructor Parqueo
+    @params {String} idParqueo
+    @params {String} nombre
+    @params {String} barrio
+    @params {String} provincia
+    @params {Double} xCoord
+    @params {Double} yCoord
+    @deriving Show
+-}
 data Parqueo = Parqueo { 
     idParqueo :: String, 
     nombre :: String, 
@@ -12,6 +22,16 @@ data Parqueo = Parqueo {
     yCoord :: Double 
 } deriving (Show)
 
+{-
+    @constructor Alquiler
+    @params {String} idAlquiler
+    @params {String} idBicicleta
+    @params {String} idUsuario
+    @params {String} idParqueoSalida
+    @params {String} idParqueoLlegada
+    @params {String} estado
+    @deriving Show
+-}
 data Alquiler = Alquiler {
     idAlquiler :: String,
     idBicicleta :: String,
@@ -21,21 +41,44 @@ data Alquiler = Alquiler {
     estado :: String
 } deriving (Show)
 
+{-
+@function convertirListaAListaDeParqueos
+@description Convierte una lista de listas de strings a una lista de parqueos
+@params {[[String]]} lista
+@return {[Parqueo]} lista de parqueos
+-}
 convertirListaAListaDeParqueos :: [[String]] -> [Parqueo]
 convertirListaAListaDeParqueos lista =
     [ Parqueo (head subLista) (subLista !! 1) (subLista !! 2) (subLista !! 3) (read (subLista !! 4) :: Double) (read (subLista !! 5) :: Double) | subLista <- lista ]
 
--- Función que calcula la distancia euclidiana entre dos puntos (x1, y1) y (x2, y2)
+{-
+@function distanciaEuclidiana
+@description Calcula la distancia euclidiana entre dos puntos
+@params {Double} x1
+@params {Double} y1
+@params {Double} x2
+@params {Double} y2
+@return {Double} distancia euclidiana
+-}
 distanciaEuclidiana :: Double -> Double -> Double -> Double -> Double
 distanciaEuclidiana x1 y1 x2 y2 = sqrt ((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 
--- Función que elimina duplicados basados en el primer valor de cada sublista
+{-
+@function eliminarRepetidosPorId
+@description Elimina los elementos repetidos de una lista de parqueos
+@params {[Parqueo]} lista de parqueos
+@return {[Parqueo]} lista de parqueos sin elementos repetidos
+-}
 eliminarRepetidosPorId :: [Parqueo] -> [Parqueo]
 eliminarRepetidosPorId = nubBy (\parq1 parq2 -> idParqueo parq1 == idParqueo parq2)
 
--- SECCION DE USUARIOS 👇
--- SECCION DE bicicletas 👇
--- Función para encontrar el parqueo más cercano
+{-
+@function encontrarParqueoCercano
+@description Encuentra el parqueo más cercano a las coordenadas del usuario
+@params {Parqueo} usuarioCoord
+@params {[Parqueo]} parqueos
+@return {Parqueo} parqueo más cercano
+-}
 encontrarParqueoCercano :: Parqueo -> [Parqueo] -> Parqueo
 encontrarParqueoCercano usuarioCoord parqueos =
   let parqueoCercano = foldl1 (\acc parq ->
@@ -46,18 +89,49 @@ encontrarParqueoCercano usuarioCoord parqueos =
                             parqueos
   in parqueoCercano
 
+{-
+@function quitarCaracter
+@description Quita el caracter \r de una cadena de texto
+@params {String} cadena
+@return {String} cadena sin el caracter \r
+-}
 quitarCaracter :: String -> String
 quitarCaracter cadena = filter (/= '\r') cadena
 
+{-
+@function quitarCaracterTercerElemento
+@description Quita el caracter \r del tercer elemento de una lista de listas de strings
+@params {[[String]]} lista
+@return {[[String]]} lista sin el caracter \r en el tercer elemento
+-}
 quitarCaracterTercerElemento :: [[String]] -> [[String]]
 quitarCaracterTercerElemento lista = map (\[x, y, z] -> [x, y, quitarCaracter z]) lista
 
+{-
+@function quitarCaracterQuintaColumna
+@description Quita el caracter \r de la quinta columna de una lista de listas de strings
+@params {[[String]]} lista
+@return {[[String]]} lista sin el caracter \r en la quinta columna
+-}
 quitarCaracterQuintaColumna :: [[String]] -> [[String]]
 quitarCaracterQuintaColumna lista = map (\[x, y, z, w, a] -> [x, y, z, w, quitarCaracter a]) lista
 
+{-
+@function quitarCaracterSextaColumna
+@description Quita el caracter \r de la sexta columna de una lista de listas de strings
+@params {[[String]]} lista
+@return {[[String]]} lista sin el caracter \r en la sexta columna
+-}
 quitarCaracterSextaColumna :: [[String]] -> [[String]]
 quitarCaracterSextaColumna lista = map (\[x, y, z, w, a, b] -> [x, y, z, w, a, quitarCaracter b]) lista
 
+{-
+@function consultarBicicletaAux
+@description Consulta la bicicleta más cercana a las coordenadas del usuario
+@params {Parqueo} usuarioCoord
+@params {[Parqueo]} parqueos
+@return {String} id de la bicicleta más cercana
+-}
 consultarBicicletasAux :: IO (String)
 consultarBicicletasAux = do
     putStrLn "Ingrese la cordenada x: "
@@ -73,29 +147,14 @@ consultarBicicletasAux = do
     let idParqueoCercano = idParqueo parqueoCercano
     return idParqueoCercano
 
--- funcion de pruebas
-cargarUsuariosAutomatico :: IO [[String]]
-cargarUsuariosAutomatico = do
-    datos <- leerArchivo "./data/prueba.csv"
-    lista2 <- cargarUsuariosDesdeArchivo "./data/usuarios.txt"
-    let lista = convertirStringALista datos
-    let lista3 = lista ++ lista2
-    let lista4 = eliminarRepetidosPorPrimerValor lista3
-    let datos3 = convertirListaAString lista4
-    print datos3
-    escribirArchivo "./data/usuarios.txt" datos3
-    return lista4
-
-
 
 -- SECCIÓN ALQUILER 👇
-{-
-El sistema le solicitará al usuario que indique: usuario (cedula), un parqueo de salida y el parqueo de llegada. Posteriormente le mostrará las bicicletas disponibles (identificador y tipo) en el parqueo de salida.
-El usuario indicará el identificador de la bicicleta y se le generará un identificador de alquiler por parte del
-sistema. La bicicleta cambia de ubicación a “tránsito”, se debe generar una estructura de datos con la información
-del alquiler (al menos salida, destino, código de la bicicleta, código del alquiler), este quedará “activo”.
--}
 
+{-
+@function alquiler :: IO()
+@description Permite al usuario alquilar una bicicleta
+@return {IO()}
+-}
 alquilar :: IO()
 alquilar = do 
     putStrLn "Ingrese su cedula: "
@@ -153,11 +212,22 @@ alquilar = do
     putStrLn "\ESC[2J"
     return ()
 
-       
--- el id de la bicicleta es el primer elemento de la lista
+
+{-
+@function filtrarPorIdAlquiler
+@description Filtra una lista de listas de strings por el id del alquiler
+@params {String} idBuscado
+@params {[[String]]} lista
+@return {[[String]]} lista filtrada
+-}
 filtrarPorIdAlquiler :: String -> [[String]] -> [[String]]
 filtrarPorIdAlquiler idBuscado lista = filter (\sublista -> sublista !! 0 == idBuscado) lista
 
+{-
+@function contarFacturas
+@description Cuenta la cantidad de facturas que hay en el sistema
+@return {IO Int} cantidad de facturas
+-}
 contarFacturas :: IO Int 
 contarFacturas = do 
     facturas <- cargarFacturasSistema
@@ -166,6 +236,12 @@ contarFacturas = do
     let idFactura = cantidadFacturas + 1
     return idFactura
 
+{-
+@function buscarBicicletaPorId
+@description Busca una bicicleta por su id
+@params {String} idBicicleta
+@return {IO [String]} bicicleta
+-}
 buscarBicicletaPorId :: String -> IO [String]
 buscarBicicletaPorId idBicicleta = do
     bicicletas <- cargarBicicletas
@@ -175,6 +251,12 @@ buscarBicicletaPorId idBicicleta = do
     let bicicleta2 = head bicicleta
     return bicicleta2
 
+{-
+@function calcularKilometros
+@description Calcula la cantidad de kilometros que hay entre dos parqueos
+@params {[String]} alquiler
+@return {IO Double} cantidad de kilometros
+-}
 calcularKilometros :: [String] -> IO Double
 calcularKilometros alquiler = do 
     let idParqueoSalida = alquiler !! 3
@@ -189,52 +271,25 @@ calcularKilometros alquiler = do
     let x2 = xCoord (head parqueoLlegada)
     let y2 = yCoord (head parqueoLlegada)
     let distancia = distanciaEuclidiana x1 y1 x2 y2
-    -- putStr "id de los parqueo: "
-    -- print idParqueoSalida
-    -- print idParqueoLlegada
-    -- print distancia
     return distancia
 
--- hay que hacer una funcion que reciba el tipo de bicicleta y devuelva la tarifa
--- existe 3 tipos de bicicletas: TR, AE, AG
+{-
+@function seleccionarTarifa
+@description Selecciona la tarifa dependiendo del tipo de bicicleta
+@params {String} tipoBicicleta
+@return {Double} tarifa
+-}
 seleccionarTarifa :: String -> Double
 seleccionarTarifa tipoBicicleta =
     if tipoBicicleta == "TR" then 100
     else if tipoBicicleta == "AE" then 200
     else 300
 
--- recibe una lista de listas de strings
 {-
-guardarFacturaEnArchivo :: [String] -> [[String]] -> [[String]] -> IO ()
-guardarFacturaEnArchivo factura alquileres bicicletas = do 
-    let datosNuevaFactura = convertirListaAString factura
-    agregarArchivo "./data/facturas.csv" datosNuevaFactura
-    -- cambiar estado del alquiler a facturado
-    let alquileresGeneral = filter(\x -> x !! 0 /= (head factura) !! 0) alquileres
-    let listaAlquileresActualizados = alquileresGeneral ++ [[(head factura) !! 0, (head factura) !! 1, (head factura) !! 2, (head factura) !! 3, (head factura) !! 4, "2"]]
-    let datosAlquileresActualizados = convertirListaAString listaAlquileresActualizados
-    escribirArchivo "./data/alquileres.csv" datosAlquileresActualizados
-    -- cambiar ubicacion de la bicicleta al parqueo de llegada
-    let bicicletasGeneral = filter(\x -> x !! 0 /= (head factura) !! 1) bicicletas
-    let listaBicicletasActualizadas = bicicletasGeneral ++ [[(head factura) !! 1, (head factura) !! 2, (head factura) !! 4]]
-    let datosBicicletasActualizadas = convertirListaAString listaBicicletasActualizadas
-    escribirArchivo "./data/bicicletas.csv" datosBicicletasActualizadas
-    putStr "Presione enter para continuar"
-    opcion <- getLine
-    putStrLn "\ESC[2J"
+@function facturarAux
+@description Permite al usuario facturar un alquiler
+@return {IO()}
 -}
-
-{-
-Facturar El sistema le solicitará al usuario que indique el identificador de alquiler, 
-el sistema verificará que el alquiler está activo y procederá a facturarlo. 
-Se le muestra al usuario una factura en pantalla con la siguiente información: identificador (autogenerado), 
-información del negocio (información comercial), usuario, salida, destino, bicicleta (identificador, tipo), 
-cantidad de kilómetros (calculado con la misma fórmula de la consulta de bicicletas), 
-tarifa por kilómetro aplicada (depende del tipo de bicicleta) y total en colones. Debe mostrar un formato amigable al usuario.
-Al facturar, el alquiler cambia a estado “facturado” y la bicicleta se le coloca de ubicación el
-parqueo destino.
--}
-
 facturarAux :: IO ()
 facturarAux = do 
     putStrLn "Ingrese el id del alquiler: "
@@ -321,7 +376,3 @@ facturarAux = do
         putStr "Presione enter para continuar"
         opcion <- getLine
         putStrLn "\ESC[2J"
-        {-
-        -}
-
-

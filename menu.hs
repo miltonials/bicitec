@@ -3,6 +3,16 @@ import Archivos
 import OpcionesOperativas
 import OpcionesGenerales
 
+{-
+    @constructor Parqueo
+    @param idParqueo: identificador del parqueo
+    @param nombre: nombre del parqueo
+    @param barrio: barrio del parqueo
+    @param provincia: provincia del parqueo
+    @param xCoord: coordenada x del parqueo
+    @param yCoord: coordenada y del parqueo
+    @deriving Show: para poder imprimir el parqueo
+-}
 data Parqueo = Parqueo { 
     idParqueo :: String, 
     nombre :: String, 
@@ -12,12 +22,22 @@ data Parqueo = Parqueo {
     yCoord :: Double 
 } deriving (Show)
 
+{-
+@function mmotrarUsuarios
+@description: imprime los usuarios
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 mostrarUsuarios :: [[String]] -> IO ()
 mostrarUsuarios usuarios = do
     putStrLn "Usuarios: "
     print usuarios
 
--- cargar usuarios desde un archivo indicado por el usuario y los almacena en un archivo llamado usuarios.txt
+{-
+@function cargarUsuariosAux
+@description: carga los usuarios
+@returns: IO ()
+-}
 cargarUsuariosAux :: IO ()
 cargarUsuariosAux = do
     lista <- cargarUsuarios
@@ -29,32 +49,60 @@ cargarUsuariosAux = do
         putStrLn "Usuarios cargados con exito"
         menuOperativas lista
 
+{-
+@function top5BicicletasMasUsada
+@description: imprime el top 5 de bicicletas mas usadas
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 top5BicicletasMasUsada :: [[String]] -> IO ()
 top5BicicletasMasUsada usuarios = do
+    putStrLn "\ESC[2J"
     top5BicicletasMasUsadaAux 
     menuEstadisticas usuarios
 
+{-
+@function top5ParqueosMasUsados
+@description: imprime el top 5 de parqueos mas usados
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 top5ParqueosMasUsados :: [[String]] -> IO ()
 top5ParqueosMasUsados usuarios = do
+    putStrLn "\ESC[2J"
     top5ParqueosMasUsadosAux
     menuEstadisticas usuarios
 
+{-
+@function top3UsuariosMasKilometros
+@description: imprime el top 3 de usuarios con mas kilometros recorridos
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 top3UsuariosMasKilometros :: [[String]] -> IO ()
 top3UsuariosMasKilometros usuarios = do
+    putStrLn "\ESC[2J"
     top3UsuariosMasKilometrosAux
     menuEstadisticas usuarios
 
+{-
+@function resumen
+@description: imprime el resumen
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 resumen :: [[String]] -> IO ()
 resumen usuarios = do
+    putStrLn "\ESC[2J"
     resumenAux
     menuEstadisticas usuarios
 
+
 {-
-El sistema debe permitirle al usuario, por medio de un submenú, acceder a las siguientes estadísticas: 
-a) Top 5 de bicicletas con más viajes, indicar bicicleta y cantidad de viajes. 
-b) Top 5 de parqueos con más viajes (salida + destino) indicar parqueo y cantidad de viajes. 
-c) Top 3 de usuarios con más kilómetros recorridos (según fórmula de distancia). Indicar usuario y cantidad.
-d) Resumen: total de viajes, total de kilómetros y total facturado (facturas generadas).
+@function menuEstadisticas
+@description: imprime el menu de estadisticas
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
 -}
 menuEstadisticas :: [[String]] -> IO ()
 menuEstadisticas usuarios = do
@@ -75,8 +123,13 @@ menuEstadisticas usuarios = do
         _ -> do
             putStrLn "Opcion invalida"
             menuEstadisticas usuarios
-    
--- Menu Operativas
+
+{-
+@function menuOperativas 
+@description: imprime el menu de operativas
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 menuOperativas :: [[String]] -> IO ()
 menuOperativas usuarios = do 
     putStrLn "\ESC[2J"
@@ -104,9 +157,22 @@ menuOperativas usuarios = do
             putStrLn "Opcion invalida"
             menuOperativas usuarios
 
+{-
+@function filtrarPorId
+@description: filtra una lista de listas de strings por el id
+@param idBuscado: id a buscar
+@param lista: lista de listas de strings
+@returns: lista de listas de strings
+-}
 filtrarPorId :: String -> [[String]] -> [[String]]
 filtrarPorId idBuscado lista = filter (\sublista -> sublista !! 2 == idBuscado) lista
 
+{-
+@function consultarBicicletas
+@description: consulta las bicicletas disponibles
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}  
 consultarBicicletas :: [[String]] -> IO ()
 consultarBicicletas usuarios = do
     parqueoCercano <- consultarBicicletasAux
@@ -121,6 +187,12 @@ consultarBicicletas usuarios = do
     opcion <- getLine
     menuGenerales usuarios
 
+{-
+@function facturar
+@description: factura
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 facturar :: [[String]] -> IO ()
 facturar usuarios = do
     facturarAux
@@ -128,6 +200,12 @@ facturar usuarios = do
     opcion <- getLine
     menuGenerales usuarios
 
+{-
+@function menuGenerales
+@description: imprime el menu de generales
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 menuGenerales :: [[String]] -> IO ()
 menuGenerales usuarios = do
     putStrLn "\ESC[2J"
@@ -148,7 +226,12 @@ menuGenerales usuarios = do
             putStrLn "Opcion invalida"
             menuGenerales usuarios
 
--- se valida el inicio de session, osea que el usuario y la contraseña sean correctos
+{-
+@function validarInicioSession
+@description: valida el inicio de session
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 validarInicioSession :: [[String]] -> IO () 
 validarInicioSession usuarios = do 
     putStr "Ingrese su usuario: "
@@ -171,11 +254,12 @@ validarInicioSession usuarios = do
         validarInicioSession usuarios
 
 
--- menu principal opciones: 
--- 1) opciones Operativas 
--- 2) Opciones Generales
--- 3) Salir
--- recibe una lista de listas de strings con los usuarios
+{-
+@function menuPrincipal
+@description: imprime el menu principal
+@param usuarios: lista de listas de strings con los usuarios
+@returns: IO ()
+-}
 menuPrincipal :: [[String]] -> IO ()
 menuPrincipal usuarios = do
     putStrLn "\ESC[2J"

@@ -1,6 +1,10 @@
 import Menu
 
--- Main
+{-
+    @function main
+    @description: funcion principal
+    @returns: IO ()
+-}
 main :: IO ()
 main = do
     let usuarios = []
