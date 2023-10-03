@@ -101,16 +101,23 @@ cargarParqueos = do
         return lista
     else do
         parqueosNuevos <- leerArchivo nombreArchivo
-        let listaParqueosNuevos = convertirStringALista parqueosNuevos
-        parqueosSistema <- readFile "./data/parqueos.csv"
-        putStr parqueosSistema -- para cerrar el archivo en memoria.
-        putStrLn "\ESC[2J" -- limpiar consola de lo que se imprimió.
-        let listaParqueosSistema = convertirStringALista parqueosSistema
-        let listaParqueos = listaParqueosSistema ++ listaParqueosNuevos
-        let listaFiltrada = nubBy (\x y -> head x == head y) listaParqueos
-        let datosParqueos = convertirListaAString listaFiltrada
-        writeFile "./data/parqueos.csv" datosParqueos
-        return listaFiltrada
+        if parqueosNuevos == "" then do
+            parqueos <- leerArchivo "./data/parqueos.csv"
+            let lista = convertirStringALista parqueos
+            putStrLn "Presione enter para continuar..."
+            _ <- getLine
+            return lista
+        else do
+            let listaParqueosNuevos = convertirStringALista parqueosNuevos
+            parqueosSistema <- readFile "./data/parqueos.csv"
+            putStr parqueosSistema -- para cerrar el archivo en memoria.
+            putStrLn "\ESC[2J" -- limpiar consola de lo que se imprimió.
+            let listaParqueosSistema = convertirStringALista parqueosSistema
+            let listaParqueos = listaParqueosSistema ++ listaParqueosNuevos
+            let listaFiltrada = nubBy (\x y -> head x == head y) listaParqueos
+            let datosParqueos = convertirListaAString listaFiltrada
+            writeFile "./data/parqueos.csv" datosParqueos
+            return listaFiltrada
 
 {-
 @name mostrarParqueos
@@ -129,6 +136,10 @@ mostrarParqueos parqueos = do
 @params lista de listas de strings, contador
 @returns none
 -}
+mostrarParqueosAux :: [[String]] -> Int -> IO ()
+mostrarParqueosAux [] _ = do
+    putStrLn "Fin de la lista de parqueos"
+
 mostrarParqueosAux (x:xs) contador = do
     putStrLn ("Parqueo #" ++ show contador)
     putStrLn ("ID: " ++ head x)
@@ -219,6 +230,9 @@ cargarBicicletas = do
 mostrarBicicletas :: [[String]] -> IO ()
 mostrarBicicletas bicicletas = do
     mostrarBicicletasAux bicicletas 1
+    putStrLn "Presione enter para continuar..."
+    _ <- getLine
+    putStr ""
 
 {-
 @name mostrarBicicletasAux
@@ -226,6 +240,10 @@ mostrarBicicletas bicicletas = do
 @params lista de listas de strings, contador
 @returns none
 -}
+mostrarBicicletasAux :: [[String]] -> Int -> IO ()
+mostrarBicicletasAux [] _ = do
+    putStrLn "Fin de la lista de bicicletas"
+
 mostrarBicicletasAux (x:xs) contador = do
     parqueos <- cargarParqueosSistema -- [[id, nombre, direccion, provincia, latitud, longitud]]
     let parqueo = filter (\y -> y !! 0 == x !! 2) parqueos
@@ -321,7 +339,7 @@ top5BicicletasMasUsadaAux = do
     mostrarTop5BicicletasMasUsadaAux listaOrdenada 1
     putStr "Presione enter para continuar"
     opcion <- getLine
-    putStrLn "\ESC[2J"
+    putStrLn "\ESC[2J]"
 
 {-
 @name top5ParqueosMasUsadosAux
@@ -401,7 +419,7 @@ top3UsuariosMasKilometrosAux = do
     print usuarios
     let lista = contarOcurrenciasUsuarios facturas usuarios
     print lista
-    print "\ESC[2J"
+    putStrLn "\ESC[2J"
     -- se ordena la lista de listas de strings por la cantidad de veces que se repite
     let listaOrdenada = reverse (sortOn (\x -> read (x !! 2) :: Double) lista)
     -- se imprime la lista de listas de strings
@@ -442,14 +460,18 @@ asignarBicicletas = do
     putStr "Ingrese el nombre del archivo: "
     nombreArchivo <- getLine
     datos <- leerArchivo nombreArchivo
-    let lista = convertirStringALista datos
-    
-    if lista == [] then do
-        putStrLn "El archivo que ingresaste está vacío."
-    else
-        asignarBicicletasAux lista
-    
-    putStrLn "El lote de bicicletas se ha actualizado."
+    if datos == "" then do
+        putStrLn "Presione enter para continuar..."
+        _ <- getLine
+        putStr ""
+    else do
+        let lista = convertirStringALista datos
+        if lista == [] then do
+            putStrLn "El archivo que ingresaste está vacío."
+        else do
+            asignarBicicletasAux lista
+        
+        putStrLn "El lote de bicicletas se ha actualizado."
     
 {-
 @name asignarBicicletasAux

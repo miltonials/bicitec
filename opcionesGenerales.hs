@@ -163,7 +163,7 @@ consultarBicicletasAux = do
 -}
 alquilar :: IO()
 alquilar = do 
-    putStrLn "Ingrese su cedula: "
+    putStr "Ingrese su cedula: "
     cedula <- getLine
     datosUsuario <- readFile "./data/usuarios.csv"
     let usuarios = convertirStringALista datosUsuario
@@ -171,14 +171,14 @@ alquilar = do
     if usuario == [] then do
         putStrLn "El usuario no existe"
     else do
-        putStrLn "Ingrese el parqueo de salida: "
+        putStr "Ingrese el parqueo de salida: "
         nombreParqueoSalida <- getLine
         parqueos <- cargarParqueosSistema
         let parqueoSalida = filter(\x -> x!!1 == nombreParqueoSalida) parqueos
         if parqueoSalida == [] then do
             putStrLn "El parqueo no existe"
         else do
-            putStrLn "Ingrese el parqueo de llegada: "
+            putStr "Ingrese el parqueo de llegada: "
             nombreParqueoLlegada <- getLine
             let parqueoLlegada = filter(\x -> x!!1 == nombreParqueoLlegada) parqueos
             if parqueoLlegada == [] then do
