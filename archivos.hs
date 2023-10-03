@@ -1,5 +1,7 @@
 module Archivos where
 import Data.List.Split (splitOn)
+import System.Directory (doesFileExist) -- para verificar si existe un archivo
+
 
 {-
 @function leerArchivo
@@ -9,8 +11,13 @@ import Data.List.Split (splitOn)
 -}
 leerArchivo :: String -> IO String
 leerArchivo nombre = do
-    contenido <- readFile nombre
-    return contenido
+    existe <- doesFileExist nombre
+    if existe then do
+        contenido <- readFile nombre
+        return contenido
+    else do
+        putStrLn "El archivo no existe"
+        return ""
 
 {-
 @function escribirArchivo

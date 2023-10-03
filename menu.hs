@@ -41,7 +41,7 @@ mostrarUsuarios usuarios = do
 cargarUsuariosAux :: IO ()
 cargarUsuariosAux = do
     lista <- cargarUsuarios
-    print lista
+    -- print lista
     if lista == [] then do
         putStrLn "No se pudo cargar los usuarios"
         menuOperativas lista
@@ -182,7 +182,8 @@ consultarBicicletas usuarios = do
     let listaConfigurada = quitarCaracterTercerElemento bicicletas
     let bicicletasdisponible = filtrarPorId idParqueoCercano listaConfigurada
     putStr "Bicicletas disponibles: "
-    print bicicletasdisponible
+    putStrLn (show (length bicicletasdisponible))
+    mostrarBicicletas bicicletasdisponible
     putStrLn "Presione enter para volver..."
     opcion <- getLine
     menuGenerales usuarios
@@ -211,7 +212,7 @@ menuGenerales usuarios = do
     putStrLn "\ESC[2J"
     putStrLn "1) Consultar bicicletas"
     putStrLn "2) Alquilar bicicletas"
-    putStrLn "3) Facurar"
+    putStrLn "3) Facturar"
     putStrLn "4) Volver al menu principal"
     putStr "Ingrese una opcion: "
     opcion <- getLine

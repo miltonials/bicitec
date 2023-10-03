@@ -138,14 +138,20 @@ consultarBicicletasAux = do
     x <- getLine
     putStrLn "Ingrese la cordenada y: "
     y <- getLine
-    let parqueo2 = Parqueo "0" "0" "0" "0" (read x :: Double) (read y :: Double)
-    parqueos <- cargarParqueosSistema
-    let parqueosNuevos = convertirListaAListaDeParqueos parqueos
-    let parqueoCercano = encontrarParqueoCercano parqueo2 parqueosNuevos
-    let parqueoCercanoString = convertirListaAString [[idParqueo parqueoCercano, nombre parqueoCercano, barrio parqueoCercano, provincia parqueoCercano]]
-    print parqueoCercanoString
-    let idParqueoCercano = idParqueo parqueoCercano
-    return idParqueoCercano
+    --validar que se ingrese un numero
+    if (read x :: Double) < 0 || (read y :: Double) < 0 then do
+        putStrLn "Ingrese un numero positivo"
+        consultarBicicletasAux
+    else do
+        let parqueo2 = Parqueo "0" "0" "0" "0" (read x :: Double) (read y :: Double)
+        parqueos <- cargarParqueosSistema
+        let parqueosNuevos = convertirListaAListaDeParqueos parqueos
+        let parqueoCercano = encontrarParqueoCercano parqueo2 parqueosNuevos
+        let parqueoCercanoString = convertirListaAString [[idParqueo parqueoCercano, nombre parqueoCercano, barrio parqueoCercano, provincia parqueoCercano]]
+        putStrLn "Parqueo más cercano: "
+        putStrLn parqueoCercanoString
+        let idParqueoCercano = idParqueo parqueoCercano
+        return idParqueoCercano
 
 
 -- SECCIÓN ALQUILER 👇
@@ -292,17 +298,19 @@ seleccionarTarifa tipoBicicleta =
 -}
 facturarAux :: IO ()
 facturarAux = do 
-    putStrLn "Ingrese el id del alquiler: "
+    putStr "Ingrese el id del alquiler: "
     idAlquiler <- getLine
     alquileres <- cargarAlquileresSistema
     -- print alquileres
     infoComercial <- leerArchivo "./data/infoComercial.txt"
     let alquileres2 = quitarCaracterSextaColumna alquileres
     -- print alquileres2
-    let alquileresActivos = filter (\x -> x !! 5 == idAlquiler ) alquileres2
-    -- print alquileresActivos
-    let alquileresSegunId = filtrarPorIdAlquiler idAlquiler alquileresActivos
+    let alquileresActivos = filter (\x -> x !! 5 == "1" ) alquileres2
+    -- let alquileresSegunId = filtrarPorIdAlquiler idAlquiler alquileresActivos
+    let alquileresSegunId = filter(\x -> x !! 3  == idAlquiler) alquileresActivos
+    -- print alquileresSegunId
     if alquileresSegunId == [] then do
+        putStrLn "\ESC[2J"
         putStrLn "El alquiler no existe"
     else do
         idFactura <- contarFacturas

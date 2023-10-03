@@ -32,16 +32,23 @@ convertirListaAString lista = intercalate "\n" (map (intercalate ",") lista)
 -}
 cargarUsuarios :: IO [[String]]
 cargarUsuarios = do
-    putStr "Ingrese el nombre del archivo: "
+    putStr "Ingrese la ruta del archivo: "
     nombreArchivo <- getLine
     datos <- leerArchivo nombreArchivo
-    lista2 <- cargarUsuariosDesdeArchivo "./data/usuarioss.csv"
-    let lista = convertirStringALista datos
-    let lista3 = lista ++ lista2
-    let lista4 = eliminarRepetidosPorPrimerValor lista3
-    let datos3 = convertirListaAString lista4
-    escribirArchivo "./data/usuarios.txt" datos3
-    return lista4
+    if datos == "" then do
+        putStrLn "El archivo que ingresaste está vacío."
+        return []
+    else do
+        print datos -- para cerrar el archivo en memoria.
+        lista2 <- cargarUsuariosDesdeArchivo "./data/usuarios.csv"
+        print lista2
+        putStrLn "\ESC[2J" -- limpiar consola de lo que se imprimió.
+        let lista = convertirStringALista datos
+        let lista3 = lista ++ lista2
+        let lista4 = eliminarRepetidosPorPrimerValor lista3
+        let datos3 = convertirListaAString lista4
+        escribirArchivo "./data/usuarios.csv" datos3
+        return lista4
 
 -- SECCION DE ALQUILERES 👇
 {-
@@ -304,8 +311,9 @@ mostrarTop5PaqueosMasUsadosAux lista contador = do
 top5BicicletasMasUsadaAux :: IO ()
 top5BicicletasMasUsadaAux = do 
     bicicletas <- cargarArchivoEnLista "./data/bicicletas.csv"
-    alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
-    let lista = contarOcurrenciasBici alquileres bicicletas
+    -- alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
+    facturas <- cargarArchivoEnLista "./data/facturas.csv"
+    let lista = contarOcurrenciasBici facturas bicicletas
     -- se ordena la lista de listas de strings por la cantidad de veces que se repite
     let listaOrdenada = reverse (sortOn (\x -> read (x !! 1) :: Int) lista)
     -- se imprime la lista de listas de strings
@@ -323,9 +331,10 @@ top5BicicletasMasUsadaAux = do
 -}
 top5ParqueosMasUsadosAux :: IO ()
 top5ParqueosMasUsadosAux = do 
-    alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
+    -- alquileres <- cargarArchivoEnLista "./data/alquileres.csv"
+    facturas <- cargarArchivoEnLista "./data/facturas.csv"
     parqueos <- cargarArchivoEnLista "./data/parqueos.csv"
-    let lista = contarOcurrenciasParqueo alquileres parqueos
+    let lista = contarOcurrenciasParqueo facturas parqueos
     -- print lista
     -- se ordena la lista de listas de strings por la cantidad de veces que se repite
     let listaOrdenada = reverse (sortOn (\x -> read (x !! 1) :: Int) lista)
@@ -392,6 +401,7 @@ top3UsuariosMasKilometrosAux = do
     print usuarios
     let lista = contarOcurrenciasUsuarios facturas usuarios
     print lista
+    print "\ESC[2J"
     -- se ordena la lista de listas de strings por la cantidad de veces que se repite
     let listaOrdenada = reverse (sortOn (\x -> read (x !! 2) :: Double) lista)
     -- se imprime la lista de listas de strings
