@@ -29,6 +29,7 @@ leerArchivo nombre = do
 escribirArchivo :: String -> String -> IO ()
 escribirArchivo nombre contenido = do
     writeFile nombre contenido
+    appendFile nombre "\n"
 
 {-
 @function agregarArchivo

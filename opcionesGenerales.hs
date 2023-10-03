@@ -138,11 +138,8 @@ consultarBicicletasAux = do
     x <- getLine
     putStrLn "Ingrese la cordenada y: "
     y <- getLine
-    --validar que se ingrese un numero
-    if (read x :: Double) < 0 || (read y :: Double) < 0 then do
-        putStrLn "Ingrese un numero positivo"
-        consultarBicicletasAux
-    else do
+    --validar que se ingrese un numero double puede ser positivo o negativo
+    if ((read x :: Double) < 0 && (read y :: Double) < 0)  || ((read x :: Double) > 0 && (read y :: Double) > 0) then do
         let parqueo2 = Parqueo "0" "0" "0" "0" (read x :: Double) (read y :: Double)
         parqueos <- cargarParqueosSistema
         let parqueosNuevos = convertirListaAListaDeParqueos parqueos
@@ -152,6 +149,9 @@ consultarBicicletasAux = do
         putStrLn parqueoCercanoString
         let idParqueoCercano = idParqueo parqueoCercano
         return idParqueoCercano
+    else do
+        putStrLn "Ingrese un numero double"
+        consultarBicicletasAux
 
 
 -- SECCIÓN ALQUILER 👇
