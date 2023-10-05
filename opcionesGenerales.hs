@@ -233,7 +233,8 @@ alquilar = do
                         let datosBicicletasActualizadas = convertirListaAString listaBicicletasActualizadas
                         agregarArchivo "./data/alquileres.csv" datosNuevoAlquiler
                         escribirArchivo "./data/bicicletas.csv" datosBicicletasActualizadas
-                        putStrLn "Bicicleta alquilada exitosamente. 🥳"
+                        -- putStrLn "Bicicleta alquilada exitosamente. 🥳"
+                        putStrLn "+ Bicicleta alquilada exitosamente."
                         imprimirResumenAlquiler nuevoAlquiler
 
     putStr "Presione enter para continuar"
