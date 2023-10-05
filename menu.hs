@@ -47,6 +47,8 @@ cargarUsuariosAux = do
         menuOperativas lista
     else do
         putStrLn "Usuarios cargados con exito"
+        putStrLn "Presione enter para continuar..."
+        _ <- getLine
         menuOperativas lista
 
 {-
@@ -178,14 +180,11 @@ consultarBicicletas usuarios = do
     parqueoCercano <- consultarBicicletasAux
     let idParqueoCercano = parqueoCercano
     bicicletas <- cargarArchivoEnLista "./data/bicicletas.csv"
-    putStrLn "id parqueo: "
     let listaConfigurada = quitarCaracterTercerElemento bicicletas
     let bicicletasdisponible = filtrarPorId idParqueoCercano listaConfigurada
-    putStr "Bicicletas disponibles: "
+    putStr "🚲 Bicicletas disponibles: "
     putStrLn (show (length bicicletasdisponible))
     mostrarBicicletas bicicletasdisponible
-    putStrLn "Presione enter para volver..."
-    opcion <- getLine
     menuGenerales usuarios
 
 {-

@@ -116,7 +116,7 @@ cargarParqueos = do
             let listaParqueos = listaParqueosSistema ++ listaParqueosNuevos
             let listaFiltrada = nubBy (\x y -> head x == head y) listaParqueos
             let datosParqueos = convertirListaAString listaFiltrada
-            writeFile "./data/parqueos.csv" datosParqueos
+            escribirArchivo "./data/parqueos.csv" datosParqueos
             return listaFiltrada
 
 {-
@@ -470,8 +470,9 @@ asignarBicicletas = do
             putStrLn "El archivo que ingresaste está vacío."
         else do
             asignarBicicletasAux lista
-        
-        putStrLn "El lote de bicicletas se ha actualizado."
+            putStrLn "El lote de bicicletas se ha actualizado."
+            _ <- getLine
+            putStr ""
     
 {-
 @name asignarBicicletasAux
@@ -506,5 +507,5 @@ asignarBicicletasAux (x:xs) = do
         print bicicletas
         print parqueos
         putStrLn "\ESC[2J"
-        writeFile "./data/bicicletas.csv" loteBicicletas_datosActualizados
+        escribirArchivo "./data/bicicletas.csv" loteBicicletas_datosActualizados
     asignarBicicletasAux xs

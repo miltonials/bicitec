@@ -98,13 +98,3 @@ cargarFacturasSistema = do
     facturas <- leerArchivo "./data/facturas.csv"
     let lista = convertirStringALista facturas
     return lista
-
-{-
-@function cerrarArchivo
-@description: cierra un archivo
-@param nombre: nombre del archivo
-@returns: IO ()
--}
-cerrarArchivo :: String -> IO ()
-cerrarArchivo nombre = do
-    writeFile nombre ""

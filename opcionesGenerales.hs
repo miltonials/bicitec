@@ -2,6 +2,19 @@ module OpcionesGenerales where
 import Archivos
 import Data.List (nubBy, intercalate)
 import OpcionesOperativas
+import Text.Read (readMaybe)
+
+{-
+    @function esDouble
+    @description verifica que un string sea de tipo numérico double
+    @params {String}
+    @
+-}
+esDouble :: String -> Bool
+esDouble dato =
+    case readMaybe dato :: Maybe Double of
+        Just _ -> True
+        Nothing -> False
 
 {-
     @constructor Parqueo
@@ -139,14 +152,24 @@ consultarBicicletasAux = do
     putStrLn "Ingrese la cordenada y: "
     y <- getLine
     --validar que se ingrese un numero double puede ser positivo o negativo
-    if ((read x :: Double) < 0 && (read y :: Double) < 0)  || ((read x :: Double) > 0 && (read y :: Double) > 0) then do
+    -- if ((read x :: Double) < 0 && (read y :: Double) < 0)  || ((read x :: Double) > 0 && (read y :: Double) > 0) then do
+    -- se valida que x y sean double positivo o negativo
+    if esDouble(x) && esDouble(y) then do
         let parqueo2 = Parqueo "0" "0" "0" "0" (read x :: Double) (read y :: Double)
         parqueos <- cargarParqueosSistema
         let parqueosNuevos = convertirListaAListaDeParqueos parqueos
         let parqueoCercano = encontrarParqueoCercano parqueo2 parqueosNuevos
-        let parqueoCercanoString = convertirListaAString [[idParqueo parqueoCercano, nombre parqueoCercano, barrio parqueoCercano, provincia parqueoCercano]]
-        putStrLn "Parqueo más cercano: "
-        putStrLn parqueoCercanoString
+        putStrLn "\ESC[2J"
+        putStrLn "🅿️ Parqueo más cercano: "
+        putStr "Id: "
+        putStrLn (idParqueo parqueoCercano)
+        putStr "Nombre: "
+        putStrLn (nombre parqueoCercano)
+        putStr "Barrio: "
+        putStrLn (barrio parqueoCercano)
+        putStr "Provincia: "
+        putStrLn (provincia parqueoCercano)
+        putStrLn "\n\n\n"
         let idParqueoCercano = idParqueo parqueoCercano
         return idParqueoCercano
     else do
@@ -210,13 +233,40 @@ alquilar = do
                         let datosBicicletasActualizadas = convertirListaAString listaBicicletasActualizadas
                         agregarArchivo "./data/alquileres.csv" datosNuevoAlquiler
                         escribirArchivo "./data/bicicletas.csv" datosBicicletasActualizadas
-                        -- putStrLn "Bicicleta alquilada exitosamente. 🥳"
-                        putStrLn "Bicicleta alquilada exitosamente. "
+                        putStrLn "Bicicleta alquilada exitosamente. 🥳"
+                        imprimirResumenAlquiler nuevoAlquiler
 
     putStr "Presione enter para continuar"
     opcion <- getLine
     putStrLn "\ESC[2J"
     return ()
+
+{-
+    @function imprimirResumenAlquiler
+    @description Imprime el resumen del  alquiler
+    @params {[[String]]} x:xs
+    @returns {IO()}
+-}
+imprimirResumenAlquiler::[[String]] -> IO()
+imprimirResumenAlquiler listaAlquiler = do
+    let idAlquiler = head listaAlquiler !! 0
+    let idBicicleta = head listaAlquiler !! 1
+    let idUsuario = head listaAlquiler !! 2
+    let idParqueoSalida = head listaAlquiler !! 3
+    let idParqueoLlegada = head listaAlquiler !! 4
+    let estado = head listaAlquiler !! 5
+
+    putStr "Resumen del alquiler: "
+    putStrLn idAlquiler
+    putStr "Id de la bicicleta: "
+    putStrLn idBicicleta
+    putStr "Id del usuario: "
+    putStrLn idUsuario
+    putStr "Id del parqueo de salida: "
+    putStrLn idParqueoSalida
+    putStr "Id del parqueo de llegada: "
+    putStrLn idParqueoLlegada
+    putStrLn "Estado: activo"
 
 
 {-
@@ -307,7 +357,7 @@ facturarAux = do
     -- print alquileres2
     let alquileresActivos = filter (\x -> x !! 5 == "1" ) alquileres2
     -- let alquileresSegunId = filtrarPorIdAlquiler idAlquiler alquileresActivos
-    let alquileresSegunId = filter(\x -> x !! 3  == idAlquiler) alquileresActivos
+    let alquileresSegunId = filter(\x -> x !! 0  == idAlquiler) alquileresActivos
     -- print alquileresSegunId
     if alquileresSegunId == [] then do
         putStrLn "\ESC[2J"
@@ -369,16 +419,12 @@ facturarAux = do
         let alquileresGeneral = filter(\x -> x !! 0 /= (head alquileresSegunId) !! 0) alquileres
         let listaAlquileresActualizados = alquileresGeneral ++ [[(head alquileresSegunId) !! 0, (head alquileresSegunId) !! 1, (head alquileresSegunId) !! 2, (head alquileresSegunId) !! 3, (head alquileresSegunId) !! 4, "0"]]
         let datosAlquileresActualizados = convertirListaAString listaAlquileresActualizados
-        -- cerrar el archivo ./data/alquileres.csv, para que se pueda escribir en el archivo
-        -- cerrarArchivo "./data/alquileres.csv"
         escribirArchivo "./data/alquileres.csv" datosAlquileresActualizados
         -- cambiar ubicacion de la bicicleta al parqueo de llegada
         let bicicletasGeneral = filter(\x -> x !! 0 /= idBicicleta) bicicletas
         let listaBicicletasActualizadas = bicicletasGeneral ++ [[bicicleta !! 0, bicicleta !! 1, (head alquileresSegunId) !! 4 ++ "\r"]]
         let datosBicicletasActualizadas = convertirListaAString listaBicicletasActualizadas
         -- print 
-        -- cerrar el archivo ./data/bicicletas.csv, para que se pueda escribir en el archivo
-        cerrarArchivo "./data/bicicletas.csv"
         escribirArchivo "./data/bicicletas.csv" datosBicicletasActualizadas
         putStrLn "Factura generada exitosamente. "
         putStr "Presione enter para continuar"
